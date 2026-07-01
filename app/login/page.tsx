@@ -28,7 +28,7 @@ export default function LoginPage() {
         localStorage.setItem('userRole', 'admin');
         
         // Redireccionamos al home o al futuro panel de administrador
-        router.push('/');
+        router.push('/admin');
         router.refresh(); 
       } else {
         setError('Credenciales incorrectas. Intenta con admin@tecnostore.com y admin123');
