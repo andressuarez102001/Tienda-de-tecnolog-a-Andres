@@ -10,34 +10,106 @@ export default function Home() {
 
       <main className="max-w-7xl mx-auto px-6 py-16">
 
-        <h2 className="text-5xl font-bold mb-6">
-          Bienvenido a TecnoStore
-        </h2>
+       <section className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-20">
 
-        <p className="text-xl text-gray-600 mb-10">
-          Encuentra cargadores, cables, fundas, audífonos y accesorios tecnológicos al mejor precio.
-        </p>
+  <div>
+
+    <span className="inline-block bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-semibold mb-6">
+      Tecnología • Calidad • Garantía
+    </span>
+
+    <h1 className="text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-6">
+      Accesorios tecnológicos para llevar tu experiencia al siguiente nivel.
+    </h1>
+
+    <p className="text-xl text-gray-600 mb-10 leading-8">
+      Encuentra cargadores, cables, fundas y accesorios cuidadosamente seleccionados para ofrecer calidad, diseño y el mejor precio.
+    </p>
+
+    <div className="flex gap-4 flex-wrap">
+
+      <Link href="/fundas">
+        <button className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 text-white px-8 py-4 rounded-xl shadow-lg font-semibold">
+          Ver Productos
+        </button>
+      </Link>
+
+      <button className="border border-gray-300 hover:border-blue-600 hover:text-blue-600 transition-all duration-300 px-8 py-4 rounded-xl font-semibold">
+        Contáctanos
+      </button>
+
+    </div>
+
+  </div>
+
+  <div className="overflow-hidden rounded-3xl shadow-2xl">
+
+    <Image
+      src="/IMAGEN-IPHONE-PORTADA.jpg"
+      alt="Accesorios tecnológicos TecnoStore"
+      width={1200}
+      height={800}
+      className="w-full h-full object-cover"
+    />
+
+  </div>
+
+</section>
 
 
 
-        <Link href="/fundas">
-  <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
-    Ver Productos
-  </button>
-</Link>
+      {/* Categorías */}
+
+<section className="mb-20">
+
+  <h2 className="text-4xl font-bold text-center text-gray-900 mb-3">
+    Explora nuestras categorías
+  </h2>
+
+  <p className="text-center text-gray-500 mb-10">
+    Encuentra rápidamente el accesorio que estás buscando.
+  </p>
+
+  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+
+    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2 p-6 text-center cursor-pointer">
+      <div className="text-5xl mb-4">🔌</div>
+      <h3 className="font-semibold">Cargadores</h3>
+    </div>
+
+    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2 p-6 text-center cursor-pointer">
+      <div className="text-5xl mb-4">🔋</div>
+      <h3 className="font-semibold">Power Banks</h3>
+    </div>
+
+    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2 p-6 text-center cursor-pointer">
+      <div className="text-5xl mb-4">🔌</div>
+      <h3 className="font-semibold">Cables</h3>
+    </div>
+
+    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2 p-6 text-center cursor-pointer">
+      <div className="text-5xl mb-4">📱</div>
+      <h3 className="font-semibold">Fundas</h3>
+    </div>
+
+    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2 p-6 text-center cursor-pointer">
+      <div className="text-5xl mb-4">🎧</div>
+      <h3 className="font-semibold">Audífonos</h3>
+    </div>
+
+    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2 p-6 text-center cursor-pointer">
+      <div className="text-5xl mb-4">🛡️</div>
+      <h3 className="font-semibold">Vidrios Templados</h3>
+    </div>
+
+  </div>
+
+</section>
 
 
 
-        {/* Banner de Portada */}
-        <div className="w-full overflow-hidden rounded-2xl shadow-lg mt-6 mb-12">
-          <Image 
-            src="/IMAGEN-IPHONE-PORTADA.jpg"
-            alt="Accesorios tecnológicos TecnoStore"
-            width={1200}
-            height={500}
-            className="w-full h-auto object-cover"
-          />
-        </div>
+
+
 
         <h3 className="text-3xl font-bold mb-8 text-gray-800">
           Productos Destacados
