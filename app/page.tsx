@@ -62,13 +62,18 @@ export default function Home() {
       href="/contactanos" 
       className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-full font-medium transition-all duration-300 hover:scale-102 text-base min-w-[160px]"
     >
-      Contáctanos
+      Contactanos
     </Link>
-  </div>
+  
+   
+    <Link 
+      href="/productos-nuevos" 
+      className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-full font-medium transition-all duration-300 hover:scale-102 text-base min-w-[160px]"
+    >
+      Productos Nuevos!
+    </Link>
 
-
-
-
+</div>
 
 
 {/* 📱 BLOQUE 1: IPHONE 17 PRO MAX */}

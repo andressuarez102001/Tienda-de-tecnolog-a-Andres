@@ -1,59 +1,43 @@
 // src/app/productos-top/page.tsx
 import Image from "next/image";
 
+// SOLUCIÓN: IDs únicos para cada producto y código ordenado
 const FEATURED_PRODUCTS = [
   {
-    id: "funda-ipad-pro",
-    name: "funda iPad Pro",
+    id: "funda-ipad-pro-1", // Único
+    name: "Funda iPad Pro",
     description: "Funda Premium con tecnología MagSafe",
     price: 35000,
     imageSrc: "/FUNDA-IPAD-PRO.jpg",
   },
   {
-    id: "funda-ipad-pro-negra",
+    id: "funda-ipad-pro-negra", // Único
     name: "Funda iPad Pro Negra",
     description: "Funda Premium con tecnología MagSafe",
     price: 85000,
     imageSrc: "/FUNDA-IPAD-1.jpg",
   },
-
-
   {
-    id: "funda-ipad-pro",
-    name: "Funda iPad Pro",
+    id: "funda-ipad-pro-2", // Único
+    name: "Funda iPad Pro V2",
     description: "Funda Premium con tecnología MagSafe",
     price: 85000,
     imageSrc: "/FUNDA-IPAD-2.jpg",
   },
-
-{
-    id: "cargador-ipad-pro",
+  {
+    id: "cargador-ipad-pro", // Único
     name: "Cargador iPad Pro",
     description: "Cargador rápido con tecnología MagSafe",
     price: 15000,
     imageSrc: "/CARGADOR-IPAD-PRO.jpg",
   },
-
-
-{
-    id: "funda-ipad-pro",
-    name: "Funda iPad Pro",
+  {
+    id: "funda-ipad-pro-3", // Único
+    name: "Funda iPad Pro V3",
     description: "Funda Premium con tecnología MagSafe",
     price: 85000,
     imageSrc: "/FUNDA-IPAD-3.jpg",
   },
-
-
-
-
-
-
-
-
-
-
-
-
 ];
 
 export default function ProductosTopPage() {
@@ -74,11 +58,11 @@ export default function ProductosTopPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {FEATURED_PRODUCTS.map((product) => (
           <div 
-            key={product.id} 
+            key={product.id} // Ahora sí funciona perfecto porque cada ID es único
             className="bg-[#121212] border border-white/[0.02] rounded-3xl p-6 flex flex-col justify-between transition-all duration-300 hover:bg-[#1c1c1e] hover:scale-[1.02] group cursor-pointer"
           >
             <div>
-              {/* Contenedor de Imagen: Ahora se integra de forma fluida y elegante */}
+              {/* Contenedor de Imagen */}
               <div className="w-full h-64 relative overflow-hidden rounded-2xl mb-6 bg-[#f5f5f7] flex justify-center items-center transition-transform duration-500 group-hover:scale-[1.01]">
                 <Image 
                   src={product.imageSrc}
@@ -89,7 +73,7 @@ export default function ProductosTopPage() {
                 />
               </div>
 
-              {/* Etiqueta sutil superior opcional (Estilo "Nuevo") */}
+              {/* Etiqueta sutil */}
               <span className="text-[11px] font-medium text-blue-500 tracking-wider uppercase block mb-1">
                 Disponible
               </span>
@@ -103,7 +87,7 @@ export default function ProductosTopPage() {
               </p>
             </div>
             
-            {/* Precio y Botón de Acción Estilo Apple */}
+            {/* Precio y Botón de Acción */}
             <div className="mt-8 pt-4 border-t border-white/[0.04] flex items-center justify-between">
               <span className="text-xl font-medium text-gray-200">
                 {new Intl.NumberFormat('es-CO', { 
