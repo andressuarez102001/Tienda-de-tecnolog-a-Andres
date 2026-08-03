@@ -1,5 +1,6 @@
 // src/app/productos-top/page.tsx
 import Image from "next/image";
+import Link from 'next/link';
 
 const FEATURED_PRODUCTS = [
   {
@@ -16,8 +17,6 @@ const FEATURED_PRODUCTS = [
     price: 85000,
     imageSrc: "/FUNDA-IPHONE-14-ROJA.jpg",
   },
-
-
   {
     id: "funda-iphone-14-transparente",
     name: "Funda iPhone 14 Transparente",
@@ -25,41 +24,27 @@ const FEATURED_PRODUCTS = [
     price: 85000,
     imageSrc: "/FUNDA-IPHONE-14-TRANSPARENTE.jpg",
   },
-
-{
+  {
     id: "cargador-iphone",
     name: "Cargador iPhone",
     description: "Cargador rápido con tecnología MagSafe",
     price: 15000,
     imageSrc: "/CARGADOR-IPHONE.jpg",
   },
-
-
-{
+  {
     id: "funda-iphone-14-normal",
     name: "Funda iPhone 14 Normal",
     description: "Funda Premium con tecnología MagSafe",
     price: 85000,
     imageSrc: "/FUNDA-IPHONE-14.jpg",
   },
-
-{
+  {
     id: "funda-iphone-16-rosada",
     name: "Funda iPhone 16 Rosada",
     description: "Funda Premium con tecnología MagSafe",
     price: 85000,
     imageSrc: "/FUNDA-IPHONE-16-ROSA.jpg",
   },
-
-
-
-
-
-
-
-
-
-
 ];
 
 export default function ProductosTopPage() {
@@ -81,35 +66,38 @@ export default function ProductosTopPage() {
         {FEATURED_PRODUCTS.map((product) => (
           <div 
             key={product.id} 
-            className="bg-[#121212] border border-white/[0.02] rounded-3xl p-6 flex flex-col justify-between transition-all duration-300 hover:bg-[#1c1c1e] hover:scale-[1.02] group cursor-pointer"
+            className="bg-[#121212] border border-white/[0.02] rounded-3xl p-6 flex flex-col justify-between transition-all duration-300 hover:bg-[#1c1c1e] hover:scale-[1.02] group"
           >
-            <div>
-              {/* Contenedor de Imagen: Ahora se integra de forma fluida y elegante */}
-              <div className="w-full h-64 relative overflow-hidden rounded-2xl mb-6 bg-[#f5f5f7] flex justify-center items-center transition-transform duration-500 group-hover:scale-[1.01]">
-                <Image 
-                  src={product.imageSrc}
-                  alt={product.name}
-                  width={400}        
-                  height={400}
-                  className="w-full h-full object-contain p-4 mix-blend-multiply" 
-                />
+            {/* ENVOLVEMOS EL CONTENIDO CLIQUEABLE CON LINK */}
+            <Link href={`/producto/${product.id}`} className="flex flex-col flex-1 cursor-pointer">
+              <div>
+                {/* Contenedor de Imagen */}
+                <div className="w-full h-64 relative overflow-hidden rounded-2xl mb-6 bg-[#f5f5f7] flex justify-center items-center transition-transform duration-500 group-hover:scale-[1.01]">
+                  <Image 
+                    src={product.imageSrc}
+                    alt={product.name}
+                    width={400}       
+                    height={400}
+                    className="w-full h-full object-contain p-4 mix-blend-multiply" 
+                  />
+                </div>
+
+                {/* Etiqueta sutil superior */}
+                <span className="text-[11px] font-medium text-blue-500 tracking-wider uppercase block mb-1">
+                  Disponible
+                </span>
+
+                {/* Textos del Producto */}
+                <h4 className="text-xl font-semibold text-white tracking-tight group-hover:text-blue-400 transition-colors">
+                  {product.name}
+                </h4>
+                <p className="text-sm text-gray-400 mt-2 font-light leading-relaxed">
+                  {product.description}
+                </p>
               </div>
-
-              {/* Etiqueta sutil superior opcional (Estilo "Nuevo") */}
-              <span className="text-[11px] font-medium text-blue-500 tracking-wider uppercase block mb-1">
-                Disponible
-              </span>
-
-              {/* Textos del Producto */}
-              <h4 className="text-xl font-semibold text-white tracking-tight group-hover:text-blue-400 transition-colors">
-                {product.name}
-              </h4>
-              <p className="text-sm text-gray-400 mt-2 font-light leading-relaxed">
-                {product.description}
-              </p>
-            </div>
+            </Link>
             
-            {/* Precio y Botón de Acción Estilo Apple */}
+            {/* Precio y Botón de Acción con Link Integrado */}
             <div className="mt-8 pt-4 border-t border-white/[0.04] flex items-center justify-between">
               <span className="text-xl font-medium text-gray-200">
                 {new Intl.NumberFormat('es-CO', { 
@@ -119,10 +107,14 @@ export default function ProductosTopPage() {
                 }).format(product.price)}
               </span>
               
-              <button className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium py-2 px-4 rounded-full transition-colors tracking-wide">
+              <Link 
+                href={`/producto/${product.id}`}
+                className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium py-2 px-4 rounded-full transition-colors tracking-wide"
+              >
                 Comprar
-              </button>
+              </Link>
             </div>
+
           </div>
         ))}
       </div>
