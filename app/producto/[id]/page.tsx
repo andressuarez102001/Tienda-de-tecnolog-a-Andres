@@ -183,10 +183,10 @@ export default function ProductDetailPage() {
               <h3 className="text-xl font-bold text-white mb-3">Especificaciones Técnicas</h3>
               <div className="space-y-2">
                 <p className="text-sm text-[#86868B] flex justify-between border-b border-[#1D1D1F] pb-2">
-                  <span className="text-white">Origen</span> <span>Shenzhen, China (Garantía Internacional)</span>
+                  <span className="text-white">Origen</span> <span>Shenzhen, China</span>
                 </p>
                 <p className="text-sm text-[#86868B] flex justify-between border-b border-[#1D1D1F] pb-2">
-                  <span className="text-white">Control de Calidad</span> <span>Certificación ADSO Plus</span>
+                  <span className="text-white">Control de Calidad</span> <span>ADSO</span>
                 </p>
               </div>
             </div>

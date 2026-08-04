@@ -103,13 +103,12 @@ export default function AdminPage() {
 
     return (
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Resumen General y Consolidado</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Resumen General</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-white p-4 rounded-lg shadow-sm border border-l-4 border-l-blue-500"><p className="text-xs text-gray-500 uppercase font-bold">Ventas del Mes</p><p className="text-2xl font-bold text-gray-900">${totalMesVentas.toLocaleString('es-CO')}</p></div>
           <div className="bg-white p-4 rounded-lg shadow-sm border border-l-4 border-l-green-500"><p className="text-xs text-gray-500 uppercase font-bold">Total Pedidos</p><p className="text-2xl font-bold text-gray-900">{totalPedidosMes}</p></div>
           <div className="bg-white p-4 rounded-lg shadow-sm border border-l-4 border-l-yellow-500"><p className="text-xs text-gray-500 uppercase font-bold">Clientes Registrados</p><p className="text-2xl font-bold text-gray-900">{usuarios.length}</p></div>
-          <div className="bg-white p-4 rounded-lg shadow-sm border border-l-4 border-l-red-500"><p className="text-xs text-gray-500 uppercase font-bold">Alertas de Stock</p><p className="text-2xl font-bold text-gray-900">{productos.filter(p => p.stock < 15).length}</p></div>
         </div>
         
         <div className="bg-white p-6 rounded-lg shadow-sm border mb-6">
@@ -305,12 +304,12 @@ export default function AdminPage() {
         </div>
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {[
-            { id: 'dashboard', icono: '📊', nombre: 'Dashboard' },
-            { id: 'pedidos', icono: '🚚', nombre: 'Pedidos' },
-            { id: 'productos', icono: '📦', nombre: 'Inventario' },
-            { id: 'categorias', icono: '🏷️', nombre: 'Categorías' },
-            { id: 'usuarios', icono: '👥', nombre: 'Usuarios' },
-            { id: 'configuracion', icono: '⚙️', nombre: 'Ajustes' }
+            { id: 'dashboard', icono: '', nombre: 'Dashboard' },
+            { id: 'pedidos', icono: '', nombre: 'Pedidos' },
+            { id: 'productos', icono: '', nombre: 'Inventario' },
+            { id: 'categorias', icono: '', nombre: 'Categorías' },
+            { id: 'usuarios', icono: '', nombre: 'Usuarios' },
+            { id: 'configuracion', icono: '', nombre: 'Ajustes' }
           ].map(menu => (
             <button key={menu.id} onClick={() => setVistaActual(menu.id as any)} className={`w-full text-left px-4 py-3 rounded transition-colors font-medium ${vistaActual === menu.id ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white'}`}>
               <span className="mr-2">{menu.icono}</span> {menu.nombre}
