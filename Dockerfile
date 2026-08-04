@@ -1,5 +1,5 @@
-# 1. Base Node.js
-FROM node:18-alpine AS base
+# 1. Base Node.js (Actualizado a v20 para Next.js)
+FROM node:20-alpine AS base
 
 # 2. Instalación de dependencias
 FROM base AS deps
@@ -18,7 +18,7 @@ RUN npm run build
 FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
@@ -26,7 +26,7 @@ COPY --from=builder /app/.next/static ./.next/static
 
 EXPOSE 3000
 
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
 CMD ["node", "server.js"]
