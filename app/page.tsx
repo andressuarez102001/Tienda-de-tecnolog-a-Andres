@@ -5,237 +5,293 @@ import Link from "next/link";
 interface CategoryItem {
   emoji: string;
   name: string;
+  slug: string;
 }
 
 const CATEGORIES: CategoryItem[] = [
-  { emoji: "🔌", name: "Cargadores" },
-  { emoji: "🔋", name: "Power Banks" },
-  { emoji: "🔌", name: "Cables" },
-  { emoji: "📱", name: "Fundas" },
-  { emoji: "🎧", name: "Audífonos" },
-  { emoji: "🛡️", name: "Vidrios Templados" },
+  { emoji: "🔌", name: "Cargadores", slug: "/cargadores" },
+  { emoji: "🔋", name: "Power Banks", slug: "/productos-top" },
+  { emoji: "🔌", name: "Cables", slug: "/cargadores" },
+  { emoji: "📱", name: "Fundas", slug: "/home-iphone" },
+  { emoji: "🎧", name: "Audífonos", slug: "/productos-top" },
+  { emoji: "🛡️", name: "Vidrios Templados", slug: "/home-iphone" },
 ];
 
-// 📲 Configuración de tu WhatsApp
-const MI_TELEFONO = "573003256891"; // <-- ¡CAMBIA ESTE NÚMERO POR EL TUYO REAL!
+const MI_TELEFONO = "573003256891";
 
-// Enlaces dinámicos con mensajes predeterminados para WhatsApp
-const MENSAJE_CONTACTO = encodeURIComponent("Hola ShenzhenStock! Quisiera recibir más información sobre el catálogo de accesorios y envíos.");
+const MENSAJE_CONTACTO = encodeURIComponent(
+  "Hola ShenzhenStock! Quisiera recibir más información sobre el catálogo de accesorios y envíos."
+);
 const URL_WHATSAPP_CONTACTO = `https://wa.me/${MI_TELEFONO}?text=${MENSAJE_CONTACTO}`;
 
-const MENSAJE_IPHONE = encodeURIComponent("Hola ShenzhenStock! Quisiera más información y disponibilidad de los accesorios para el iPhone 17 Pro Max.");
+const MENSAJE_IPHONE = encodeURIComponent(
+  "Hola ShenzhenStock! Quisiera más información y disponibilidad de los accesorios para el iPhone 17 Pro Max."
+);
 const URL_WHATSAPP_IPHONE = `https://wa.me/${MI_TELEFONO}?text=${MENSAJE_IPHONE}`;
 
 export default function Home() {
   return (
-<main className="max-w-7xl mx-auto px-6 py-16">
+    <main className="relative min-h-screen bg-[#08080a] text-white overflow-hidden selection:bg-blue-500 selection:text-white">
+      {/* 🌌 FONDO CON EFECTO AMBIENT GLOW */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-gradient-to-tr from-blue-600/20 via-indigo-500/10 to-transparent blur-[140px] pointer-events-none rounded-full" />
+      <div className="absolute top-[40%] right-0 w-[500px] h-[500px] bg-blue-500/10 blur-[160px] pointer-events-none rounded-full" />
 
-      {/* SECTION: HERO (ESTILO APPLE WWDC) */}
-      <section className="flex flex-col items-center text-center pt-12 pb-20 max-w-4xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
         
-        {/* Etiqueta superior minimalista */}
-        <span className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-md border border-white/10 px-4 py-1.5 rounded-full text-xs font-medium text-gray-400 uppercase tracking-widest shadow-sm mb-8">
-          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
-          Tecnología • Calidad • Garantía
-        </span>
+        {/* 🚀 HERO SECTION REDISEÑADA */}
+        <section className="flex flex-col items-center text-center pt-8 pb-16 max-w-4xl mx-auto">
+          {/* Badge Neón Minimalista */}
+          <div className="inline-flex items-center gap-2.5 bg-white/[0.03] backdrop-blur-xl border border-white/10 px-4 py-2 rounded-full text-xs font-medium text-blue-400 tracking-wider uppercase mb-8 shadow-2xl hover:border-blue-500/40 transition-all">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+            </span>
+            Tecnología Premium • Envíos Nacionales
+          </div>
 
-        {/* Título de alto impacto */}
-        <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-6 leading-[1.1] max-w-3xl">
-          Accesorios tecnológicos para llevar tu experiencia al siguiente nivel.
-        </h1>
+          {/* Título Principal Tipografía Impacto */}
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-gray-100 to-gray-500 mb-6 leading-[1.08]">
+            El estándar superior para tus dispositivos.
+          </h1>
 
-        {/* Descripción fluida */}
-        <p className="text-xl md:text-2xl text-gray-400 font-light mb-10 max-w-2xl leading-relaxed">
-          Encuentra cargadores, cables, fundas y accesorios cuidadosamente seleccionados para ofrecer calidad, diseño y el mejor precio.
-        </p>
+          {/* Subtítulo fluido */}
+          <p className="text-lg md:text-xl text-gray-400 font-normal mb-10 max-w-2xl leading-relaxed">
+            Equipamiento de alta gama, cargadores, fundas exclusivas y accesorios seleccionados para maximizar tu experiencia.
+          </p>
 
-        {/* Botones simétricos estilo Apple Store */}
-        <div className="flex gap-4 flex-wrap justify-center mb-16">
-          <Link 
-            href="/productos-top" 
-            className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-full font-medium transition-all duration-300 hover:scale-102 text-base min-w-[160px]"
-          >
-            Productos TOP
-          </Link>
+          {/* Botones de Acción con Jerarquía Clara */}
+          <div className="flex gap-4 flex-wrap justify-center items-center">
+            <Link
+              href="/productos-top"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 shadow-lg shadow-blue-500/25 flex items-center gap-2"
+            >
+              Explorar Catálogo TOP
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </Link>
 
-          {/* 💬 BOTÓN DIRECTO A WHATSAPP (CONTÁCTANOS) */}
-          <a 
-            href={URL_WHATSAPP_CONTACTO}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-[#25D366] hover:bg-[#20ba5a] text-black font-semibold px-6 py-3 rounded-full transition-all duration-300 hover:scale-102 text-base min-w-[160px] flex items-center justify-center gap-2 shadow-lg"
-          >
-            <span>💬 WhatsApp</span>
-          </a>
-        
-          <Link 
-            href="/productos-nuevos" 
-            className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-full font-medium transition-all duration-300 hover:scale-102 text-base min-w-[160px]"
-          >
-            Productos Nuevos!
-          </Link>
-        </div>
-
-        {/* 📱 BLOQUE 1: IPHONE 17 PRO MAX */}
-        <div className="w-full overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-gray-900 to-black p-2 shadow-2xl block transition-all duration-300 hover:border-white/20 group mb-8">
-          
-          {/* Enlace al hacer clic en Título o Imagen para ir a los detalles */}
-          <Link href="/home-iphone" className="block cursor-pointer">
-            <h1 className="text-2xl md:text-3xl font-semibold text-center text-white tracking-tight mb-2 mt-6 group-hover:text-blue-400 transition-colors">
-              Accesorios para iPhone 17 Pro Max
-            </h1>
-            <p className="text-center text-sm text-gray-400 font-light mb-4">
-              Explora nuestra selección de fundas, cargadores y más.
-            </p>
-            <div className="overflow-hidden rounded-2xl relative">
-              <Image
-                src="/IMAGEN-IPHONE-PORTADA.jpg"
-                alt="Accesorios tecnológicos TecnoStore"
-                width={1200}
-                height={675}
-                className="w-full h-auto object-cover rounded-2xl transition-transform duration-500 ease-out group-hover:scale-[1.05]"
-                priority 
-              />
-            </div>
-          </Link>
-
-          {/* Botón directo para pedir por WhatsApp */}
-          <div className="py-4 text-center">
-            <a 
-              href={URL_WHATSAPP_IPHONE}
+            <a
+              href={URL_WHATSAPP_CONTACTO}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block bg-[#25D366] hover:bg-[#20ba5a] text-black font-semibold text-xs px-6 py-2.5 rounded-full transition-all duration-200"
+              className="bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 hover:border-emerald-500/50 text-white font-medium px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 flex items-center gap-2.5"
             >
-              Pedir iPhone Kit por WhatsApp
+              <span className="w-2.5 h-2.5 rounded-full bg-[#25D366]"></span>
+              Chat WhatsApp
             </a>
           </div>
+        </section>
 
-        </div>
-
-        {/* 🍏 BLOQUE 2: IPAD PRO */}
-        <Link 
-          href="/home-ipad" 
-          className="w-full overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-gray-900 to-black p-2 shadow-2xl block transition-all duration-300 hover:border-white/20 group cursor-pointer mb-8"
-        >
-          <h1 className="text-2xl md:text-3xl font-semibold text-center text-white tracking-tight mb-2 mt-6">
-            Accesorios para tu iPad Pro
-          </h1>
-          <p className="text-center text-sm text-gray-400 font-light mb-4">
-            Explora nuestra selección de accesorios para tu iPad Pro, fundas, cargadores y más.
-          </p>
-          <div className="overflow-hidden rounded-2xl">
-            <Image
-              src="/IPAD-PORTADA.jpg"
-              alt="Accesorios tecnológicos TecnoStore"
-              width={1200}
-              height={675}
-              className="w-full h-auto object-cover rounded-2xl transition-transform duration-500 ease-out group-hover:scale-[1.12]"
-              priority 
-            />
-          </div>
-        </Link>
-
-        {/* 🛸 BLOQUE 3: DRONE */}
-        <Link 
-          href="/home-drone" 
-          className="w-full overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-gray-900 to-black p-2 shadow-2xl block transition-all duration-300 hover:border-white/20 group cursor-pointer"
-        >
-          <h1 className="text-2xl md:text-3xl font-semibold text-center text-white tracking-tight mb-2 mt-6">
-            Compra tu Drone con nosotros!
-          </h1>
-          <p className="text-center text-sm text-gray-400 font-light mb-4">
-            Explora nuestra selección de drones y ordena ahora mismo, con garantía y soporte técnico.
-          </p>
-          <div className="overflow-hidden rounded-2xl">
-            <Image
-              src="/DRONE-PORTADA.jpg"
-              alt="Accesorios tecnológicos TecnoStore"
-              width={1200}
-              height={675}
-              className="w-full h-auto object-cover rounded-2xl transition-transform duration-500 ease-out group-hover:scale-[1.12]"
-              priority 
-            />
-          </div>
-        </Link>
-
-
-
-
-     {/* 🍏 BLOQUE 4:Juguetes */}
-        <Link 
-          href="/home-juguetes" 
-          className="w-full overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-gray-900 to-black p-2 shadow-2xl block transition-all duration-300 hover:border-white/20 group cursor-pointer mb-8"
-        >
-          <h1 className="text-2xl md:text-3xl font-semibold text-center text-white tracking-tight mb-2 mt-6">
-            Diversion y Juguetes para todas las edades
-          </h1>
-          <p className="text-center text-sm text-gray-400 font-light mb-4">
-            juguetes y accesorios para todas las edades, desde los más pequeños hasta los más grandes.
-          </p>
-          <div className="overflow-hidden rounded-2xl">
-            <Image
-              src="/JUGUETES2.jpg"
-              alt="Accesorios tecnológicos TecnoStore"
-              width={1200}
-              height={675}
-              className="w-full h-auto object-cover rounded-2xl transition-transform duration-500 ease-out group-hover:scale-[1.12]"
-              priority 
-            />
-          </div>
-        </Link>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      </section>
-
-      {/* SECTION: CATEGORÍAS (ESTILO APPLE STORE) */}
-      <section className="mb-24 max-w-6xl mx-auto px-4">
-        <h2 className="text-2xl md:text-3xl font-semibold text-center text-white tracking-tight mb-2">
-          Explora nuestras categorías
-        </h2>
-        <p className="text-center text-sm text-gray-400 font-light mb-12">
-          Encuentra rápidamente el accesorio que estás buscando.
-        </p>
-
-        {/* Grilla con tarjetas estilizadas y compactas */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {CATEGORIES.map((category) => (
-            <div 
-              key={category.name} 
-              className="bg-[#121212] hover:bg-[#1c1c1e] rounded-2xl p-5 text-center cursor-pointer transition-all duration-300 hover:scale-105 group border border-white/[0.02]"
-            >
-              <div className="text-4xl mb-3 transition-transform duration-300 group-hover:scale-110" role="img" aria-label={category.name}>
-                {category.emoji}
-              </div>
-              <h3 className="text-xs font-medium text-gray-400 group-hover:text-white transition-colors tracking-wide">
-                {category.name}
-              </h3>
+        {/* 🛡️ BARRA DE BENEFICIOS (TRUST BADGES) */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-16 p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-sm">
+          <div className="flex items-center gap-4 justify-center md:justify-start">
+            <div className="p-3 bg-blue-500/10 rounded-xl text-blue-400 text-2xl">🚚</div>
+            <div>
+              <h4 className="text-sm font-semibold text-white">Envíos Garantizados</h4>
+              <p className="text-xs text-gray-400">Despachos rápidos a todo el país</p>
             </div>
-          ))}
-        </div>
-      </section>
+          </div>
+          <div className="flex items-center gap-4 justify-center md:justify-start border-y md:border-y-0 md:border-x border-white/5 py-4 md:py-0 md:px-6">
+            <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-400 text-2xl">🛡️</div>
+            <div>
+              <h4 className="text-sm font-semibold text-white">Garantía Directa</h4>
+              <p className="text-xs text-gray-400">Calidad probada en cada producto</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4 justify-center md:justify-start">
+            <div className="p-3 bg-indigo-500/10 rounded-xl text-indigo-400 text-2xl">⚡</div>
+            <div>
+              <h4 className="text-sm font-semibold text-white">Atención Inmediata</h4>
+              <p className="text-xs text-gray-400">Asesoría directa por WhatsApp</p>
+            </div>
+          </div>
+        </section>
 
+        {/* 🏷️ NAVEGACIÓN RÁPIDA POR CATEGORÍAS */}
+        <section className="mb-20">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white">Categorías Destacadas</h2>
+              <p className="text-sm text-gray-400 mt-1">Selecciona la línea de accesorios que buscas</p>
+            </div>
+            <Link href="/productos-nuevos" className="text-xs font-semibold text-blue-400 hover:text-blue-300 transition-colors mt-2 sm:mt-0 flex items-center gap-1">
+              Ver novedades →
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {CATEGORIES.map((category) => (
+              <Link
+                key={category.name}
+                href={category.slug}
+                className="group relative overflow-hidden bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.06] hover:border-blue-500/40 rounded-2xl p-4 text-center transition-all duration-300 hover:-translate-y-1"
+              >
+                <div className="text-3xl mb-2 transition-transform duration-300 group-hover:scale-125">
+                  {category.emoji}
+                </div>
+                <h3 className="text-xs font-medium text-gray-300 group-hover:text-white tracking-wide">
+                  {category.name}
+                </h3>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* 🍱 BENTO GRID DE DESTACADOS (LAYOUT ASIMÉTRICO PREMIUM) */}
+        <section className="mb-20">
+          <div className="mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">Colecciones Exclusivas</h2>
+            <p className="text-sm text-gray-400 mt-1">Explora nuestros universos tecnológicos más populares</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+            
+            {/* BLOQUE PRINCIPAL (GRANDE): IPHONE 17 PRO MAX */}
+            <div className="md:col-span-8 group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-gray-900/90 to-black p-6 sm:p-8 flex flex-col justify-between hover:border-blue-500/50 transition-all duration-500 shadow-2xl">
+              <div className="z-10 mb-6">
+                <span className="bg-blue-500/10 text-blue-400 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-blue-500/20">
+                  Lanzamiento Top
+                </span>
+                <h3 className="text-3xl sm:text-4xl font-extrabold text-white mt-3 group-hover:text-blue-400 transition-colors">
+                  iPhone
+                </h3>
+                <p className="text-sm text-gray-400 mt-2 max-w-md">
+                  Protección de grado militar, estuches MagSafe y cargadores rápidos diseñados a la medida.
+                </p>
+              </div>
+
+              <Link href="/home-iphone" className="relative h-64 sm:h-80 w-full overflow-hidden rounded-2xl block mb-4">
+                <Image
+                  src="/IMAGEN-IPHONE-PORTADA.jpg"
+                  alt="Accesorios iPhone"
+                  fill
+                  className="object-cover object-center rounded-2xl group-hover:scale-105 transition-transform duration-700 ease-out"
+                  priority
+                />
+              </Link>
+
+              <div className="flex flex-wrap items-center justify-between gap-4 z-10 pt-2 border-t border-white/5">
+                <Link
+                  href="/home-iphone"
+                  className="text-xs font-semibold text-white group-hover:text-blue-400 transition-colors flex items-center gap-1"
+                >
+                  Ver todos los accesorios →
+                </Link>
+                <a
+                  href={URL_WHATSAPP_IPHONE}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-[#25D366] hover:bg-[#20ba5a] text-black font-semibold text-xs px-5 py-2.5 rounded-full transition-all duration-200 shadow-md"
+                >
+                  Pedir Kit por WhatsApp
+                </a>
+              </div>
+            </div>
+
+            {/* BLOQUE SECUNDARIO: IPAD PRO */}
+            <div className="md:col-span-4 group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-gray-900/90 to-black p-6 flex flex-col justify-between hover:border-white/20 transition-all duration-500 shadow-2xl">
+              <div>
+                <span className="bg-indigo-500/10 text-indigo-400 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-indigo-500/20">
+                  Productividad
+                </span>
+                <h3 className="text-2xl font-bold text-white mt-3 group-hover:text-indigo-400 transition-colors">
+                  iPad
+                </h3>
+                <p className="text-xs text-gray-400 mt-1">
+                  Fundas inteligentes y periféricos para potenciar tu trabajo.
+                </p>
+              </div>
+
+              <Link href="/home-ipad" className="relative h-48 w-full overflow-hidden rounded-2xl my-4 block">
+                <Image
+                  src="/IPAD-PORTADA.jpg"
+                  alt="iPad Pro"
+                  fill
+                  className="object-cover object-center rounded-2xl group-hover:scale-105 transition-transform duration-700 ease-out"
+                  priority
+                />
+              </Link>
+
+              <Link
+                href="/home-ipad"
+                className="text-xs font-semibold text-gray-300 group-hover:text-white transition-colors flex items-center justify-between pt-2 border-t border-white/5"
+              >
+                <span>Explorar línea iPad</span>
+                <span>→</span>
+              </Link>
+            </div>
+
+            {/* BLOQUE INFERIOR IZQUIERDO: DRONES */}
+            <div className="md:col-span-6 group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-gray-900/90 to-black p-6 flex flex-col justify-between hover:border-white/20 transition-all duration-500 shadow-2xl">
+              <div>
+                <span className="bg-purple-500/10 text-purple-400 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-purple-500/20">
+                  Tecnología Aérea
+                </span>
+                <h3 className="text-2xl font-bold text-white mt-3 group-hover:text-purple-400 transition-colors">
+                  Drones
+                </h3>
+                <p className="text-xs text-gray-400 mt-1">
+                  Equipos de captura con garantía y soporte técnico local.
+                </p>
+              </div>
+
+              <Link href="/home-drone" className="relative h-52 w-full overflow-hidden rounded-2xl my-4 block">
+                <Image
+                  src="/DRONE-PORTADA.jpg"
+                  alt="Drones"
+                  fill
+                  className="object-cover object-center rounded-2xl group-hover:scale-105 transition-transform duration-700 ease-out"
+                  priority
+                />
+              </Link>
+
+              <Link
+                href="/home-drone"
+                className="text-xs font-semibold text-gray-300 group-hover:text-white transition-colors flex items-center justify-between pt-2 border-t border-white/5"
+              >
+                <span>Ver catálogo de Drones</span>
+                <span>→</span>
+              </Link>
+            </div>
+
+            {/* BLOQUE INFERIOR DERECHO: JUGUETES Y DIVERSIÓN */}
+            <div className="md:col-span-6 group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-gray-900/90 to-black p-6 flex flex-col justify-between hover:border-white/20 transition-all duration-500 shadow-2xl">
+              <div>
+                <span className="bg-amber-500/10 text-amber-400 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-amber-500/20">
+                  Lifestyle & Fun
+                </span>
+                <h3 className="text-2xl font-bold text-white mt-3 group-hover:text-amber-400 transition-colors">
+                  Juguetes
+                </h3>
+                <p className="text-xs text-gray-400 mt-1">
+                  Juguetes interactivos y accesorios para todas las edades.
+                </p>
+              </div>
+
+              <Link href="/home-juguetes" className="relative h-52 w-full overflow-hidden rounded-2xl my-4 block">
+                <Image
+                  src="/JUGUETES2.jpg"
+                  alt="Juguetes y Gadgets"
+                  fill
+                  className="object-cover object-center rounded-2xl group-hover:scale-105 transition-transform duration-700 ease-out"
+                  priority
+                />
+              </Link>
+
+              <Link
+                href="/home-juguetes"
+                className="text-xs font-semibold text-gray-300 group-hover:text-white transition-colors flex items-center justify-between pt-2 border-t border-white/5"
+              >
+                <span>Descubrir Gadgets</span>
+                <span>→</span>
+              </Link>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
     </main>
   );
 }

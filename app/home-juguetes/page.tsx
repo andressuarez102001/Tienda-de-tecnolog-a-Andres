@@ -7,8 +7,16 @@ const FEATURED_PRODUCTS = [
     id: "lego",
     name: "Set de Ladrillos LEGO CITY",
     description: "Set de ladrillos para construir tu propio universo de diversión y creatividad.",
-    price: 80000,
+    price: 43000,
     imageSrc: "/LEGO.jpg",
+  },
+
+   {
+    id: "dinosaurio",
+    name: "Dinosaurio de peluche",
+    description: "Un adorable dinosaurio de peluche para que tus hijos lo tengan siempre cerca.",
+    price: 15000,
+    imageSrc: "/dinosaurio.jpg",
   },
   
 ];
