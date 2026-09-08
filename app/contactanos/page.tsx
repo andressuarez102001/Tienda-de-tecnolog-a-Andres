@@ -1,6 +1,4 @@
 // src/app/contactanos/page.tsx
-import Image from "next/image";
-
 export default function ContactanosPage() {
   return (
     <main className="max-w-4xl mx-auto px-6 pt-28 pb-20 bg-black min-h-[85vh] flex flex-col items-center text-center">

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const MI_TELEFONO = "573003256891";
 
@@ -148,9 +149,11 @@ export default function ProductDetailPage() {
               {producto.categoria}
             </span>
 
-            <img 
+            <Image
               src={imagenesGaleria[imagenActiva] || imagenesGaleria[0]} 
               alt={producto.nombre} 
+              fill
+              sizes="(max-width: 1024px) 100vw, 58vw"
               className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-700 ease-out"
             />
           </div>
@@ -167,7 +170,7 @@ export default function ProductDetailPage() {
                     : 'border-white/10 opacity-50 hover:opacity-100 hover:border-white/30'
                 }`}
               >
-                <img src={img} alt={`Vista ${index + 1}`} className="w-full h-full object-contain" />
+                <Image src={img} alt={`Vista ${index + 1}`} fill sizes="25vw" className="object-contain" />
               </button>
             ))}
           </div>

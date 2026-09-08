@@ -1,172 +1,74 @@
 'use client';
 
 import React, { useState } from 'react';
+import { createAdminManagementService } from '@/application/admin/createAdminManagementService';
+import { type OrderStatus, type Product, type ProductDraft } from '@/domain/admin/entities';
 
-// ==========================================
-// 1. POO: INTERFACES (Molde de las Entidades)
-// ==========================================
-interface Producto {
-  id: number;
-  nombre: string;
-  categoria: string;
-  precio: number;
-  stock: number;
-}
-
-interface Pedido {
-  id: number;
-  cliente: string;
-  fecha: string;
-  total: number;
-  metodoPago: 'PSE' | 'Efectivo/Contraentrega' | 'Nequi/Bancolombia';
-  estado: 'Pendiente' | 'Enviado' | 'Entregado';
-}
-
-interface Usuario {
-  id: number;
-  nombre: string;
-  email: string;
-  rol: 'Admin' | 'Cliente';
-  estado: 'Activo' | 'Bloqueado';
-}
-
-interface Categoria {
-  id: number;
-  nombre: string;
-}
-
-interface ReportePeriodo {
-  periodo: string;
-  rangoFechas: string;
-  totalPedidos: number;
-  ventas: number;
-  estado: string;
-}
+// Composition root: la UI depende del caso de uso, no de una fuente de datos concreta.
+const adminManagement = createAdminManagementService();
+type AdminView = 'dashboard' | 'productos' | 'pedidos' | 'usuarios' | 'categorias' | 'configuracion';
+const ADMIN_MENU: ReadonlyArray<{ id: AdminView; icono: string; nombre: string }> = [
+  { id: 'dashboard', icono: '📊', nombre: 'Dashboard' }, { id: 'pedidos', icono: '📦', nombre: 'Pedidos' }, { id: 'productos', icono: '🏷️', nombre: 'Inventario' }, { id: 'categorias', icono: '📁', nombre: 'Categorías' }, { id: 'usuarios', icono: '👥', nombre: 'Usuarios' }, { id: 'configuracion', icono: '⚙️', nombre: 'Ajustes' },
+];
 
 export default function AdminPage() {
+  const [initialState] = useState(() => adminManagement.loadInitialState());
   // ==========================================
   // 2. ESTADOS DEL SISTEMA (Ajustado para ~ $2.7M COP)
   // ==========================================
-  const [vistaActual, setVistaActual] = useState<
-    'dashboard' | 'productos' | 'pedidos' | 'usuarios' | 'categorias' | 'configuracion'
-  >('dashboard');
+  const [vistaActual, setVistaActual] = useState<AdminView>('dashboard');
 
   const [filtroCategoria, setFiltroCategoria] = useState<string>('Todas');
   const [busquedaProducto, setBusquedaProducto] = useState<string>('');
 
-  const [productos, setProductos] = useState<Producto[]>([
-    { id: 1, nombre: 'Funda iPhone 17 Pro Max', categoria: 'Fundas', precio: 9500, stock: 8 }, // $280.000
-    { id: 2, nombre: 'Funda iPhone 14 Roja', categoria: 'Fundas', precio: 8500, stock: 5 },   // $150.000
-    { id: 3, nombre: 'Funda iPhone 14 Transparente', categoria: 'Fundas', precio:8500, stock: 6 }, // $150.000
-    { id: 4, nombre: 'Cargador iPhone 20W', categoria: 'Cargadores', precio: 20000, stock: 10 }, // $350.000
-    { id: 5, nombre: 'Funda iPhone 14 Normal', categoria: 'Fundas', precio: 8000, stock: 4 }, // $100.000
-    { id: 6, nombre: 'Funda iPhone 16 Rosada', categoria: 'Fundas', precio: 8000, stock: 5 }, // $150.000
-    { id: 7, nombre: 'Funda iPad Pro', categoria: 'Fundas', precio: 18000, stock: 4 },        // $180.000
-    { id: 8, nombre: 'Funda iPad Pro Negra', categoria: 'Fundas', precio: 17000, stock: 3 },  // $120.000
-    { id: 9, nombre: 'Funda iPad Pro V2', categoria: 'Fundas', precio: 18000, stock: 2 },     // $80.000
-    { id: 10, nombre: 'Cargador iPad Pro 30W', categoria: 'Cargadores', precio: 21000, stock: 5 }, // $225.000
-    { id: 11, nombre: 'Funda iPad Pro V3', categoria: 'Fundas', precio: 18000, stock: 2 },    // $80.000
-    { id: 12, nombre: 'Drone ALPHA 4K', categoria: 'Drones', precio: 52000, stock: 1 },     // $210.000
-    { id: 13, nombre: 'Drone ALPHA 2K', categoria: 'Drones', precio: 45000, stock: 1 },     // $165.000
-    { id: 14, nombre: 'Control de Drone', categoria: 'Drones', precio: 25000, stock: 2 }, // $170.000
-    { id: 15, nombre: 'Batería Portátil 10000mAh', categoria: 'Gadgets', precio: 20000, stock: 3 }, // $105.000
-    { id: 16, nombre: 'Extensor de Enchufe Smart', categoria: 'Gadgets', precio: 15000, stock: 2 }, // $60.000
-    { id: 17, nombre: 'Gafas VR 3D Lite', categoria: 'Gadgets', precio: 22000, stock: 2 },     // $80.000
-    { id: 18, nombre: 'Inflador Portátil 12V', categoria: 'Gadgets', precio: 19000, stock: 2 }, // $60.000
-    { id: 19, nombre: 'Trípode para Celular', categoria: 'Gadgets', precio: 11000, stock: 0 },  // $0 (Agotado)
-  ]); // Suma total del inventario: $2.715.000 COP
-
-  const [pedidos, setPedidos] = useState<Pedido[]>([
-    { id: 101, cliente: 'Andres Suarez', fecha: '2026-08-01', total: 35000, metodoPago: 'Nequi/Bancolombia', estado: 'Entregado' },
-    { id: 102, cliente: 'Carlos Mendoza', fecha: '2026-08-02', total: 20000, metodoPago: 'PSE', estado: 'Enviado' },
-    { id: 103, cliente: 'Maria Fernanda', fecha: '2026-08-04', total: 72000, metodoPago: 'Efectivo/Contraentrega', estado: 'Pendiente' },
-  ]);
-
-  const [usuarios, setUsuarios] = useState<Usuario[]>([
-    { id: 1, nombre: 'Andres Elian Diaz Suarez', email: 'admin@shenzhenstock.com', rol: 'Admin', estado: 'Activo' },
-    { id: 2, nombre: 'Cliente Prueba 1', email: 'cliente@gmail.com', rol: 'Cliente', estado: 'Activo' },
-  ]);
-
-  const [categorias, setCategorias] = useState<Categoria[]>([
-    { id: 1, nombre: 'Fundas' },
-    { id: 2, nombre: 'Cargadores' },
-    { id: 3, nombre: 'Drones' },
-    { id: 4, nombre: 'Gadgets' },
-  ]);
-
-  const [reportesPeriodos] = useState<ReportePeriodo[]>([
-    { periodo: 'Semana 1', rangoFechas: '01 Jun - 07 Jun 2026', totalPedidos: 1, ventas: 35000, estado: 'Cerrada / Facturada' },
-    { periodo: 'Semana 2', rangoFechas: '08 Jun - 14 Jun 2026', totalPedidos: 1, ventas: 20000, estado: 'Cerrada / Facturada' },
-    { periodo: 'Semana 3', rangoFechas: '15 Jun - 21 Jun 2026', totalPedidos: 1, ventas: 72000, estado: 'Cerrada / Facturada' },
-    { periodo: 'Semana 4', rangoFechas: '22 Jun - 30 Jun 2026', totalPedidos: 0, ventas: 0, estado: 'Programada' },
-  ]);
-
+  const [productos, setProductos] = useState(initialState.productos);
+  const [pedidos, setPedidos] = useState(initialState.pedidos);
+  const [usuarios, setUsuarios] = useState(initialState.usuarios);
+  const [categorias, setCategorias] = useState(initialState.categorias);
+  const [reportesPeriodos] = useState(initialState.reportesPeriodos);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
-  const [productoEditando, setProductoEditando] = useState<Producto | null>(null);
-  const [formData, setFormData] = useState({ nombre: '', categoria: 'Fundas', precio: 0, stock: 0 });
+  const [productoEditando, setProductoEditando] = useState<Product | null>(null);
+  const [formData, setFormData] = useState<ProductDraft>({ nombre: '', categoria: 'Fundas', precio: 0, stock: 0 });
   const [nuevaCategoria, setNuevaCategoria] = useState('');
-  const [config, setConfig] = useState({
-    nombreTienda: 'ShenzhenStock',
-    costoEnvio: 12000,
-    emailContacto: 'soporte@shenzhenstock.com',
-  });
+  const [config, setConfig] = useState(initialState.config);
 
   // ==========================================
   // 3. MÉTODOS DE NEGOCIO
   // ==========================================
   const guardarProducto = (e: React.FormEvent) => {
     e.preventDefault();
-    if (productoEditando) {
-      setProductos(productos.map((p) => (p.id === productoEditando.id ? { ...formData, id: p.id } : p)));
-    } else {
-      setProductos([
-        ...productos,
-        { ...formData, id: productos.length > 0 ? Math.max(...productos.map((p) => p.id)) + 1 : 1 },
-      ]);
-    }
+    setProductos(adminManagement.saveProduct(productos, formData, productoEditando?.id ?? null));
     setMostrarFormulario(false);
     setProductoEditando(null);
     setFormData({ nombre: '', categoria: categorias[0]?.nombre || 'Fundas', precio: 0, stock: 0 });
   };
 
-  const eliminarProducto = (id: number) => window.confirm('¿Eliminar producto del inventario?') && setProductos(productos.filter((p) => p.id !== id));
-  const iniciarEdicion = (producto: Producto) => {
+  const eliminarProducto = (id: number) => window.confirm('¿Eliminar producto del inventario?') && setProductos(adminManagement.removeProduct(productos, id));
+  const iniciarEdicion = (producto: Product) => {
     setProductoEditando(producto);
-    setFormData({ ...producto });
+    setFormData({ nombre: producto.nombre, categoria: producto.categoria, precio: producto.precio, stock: producto.stock });
     setMostrarFormulario(true);
   };
-  const cambiarEstadoPedido = (id: number, estado: Pedido['estado']) =>
-    setPedidos(pedidos.map((p) => (p.id === id ? { ...p, estado } : p)));
-  const cambiarEstadoUsuario = (id: number) =>
-    setUsuarios(
-      usuarios.map((u) => (u.id === id ? { ...u, estado: u.estado === 'Activo' ? 'Bloqueado' : 'Activo' } : u))
-    );
+  const cambiarEstadoPedido = (id: number, estado: OrderStatus) => setPedidos(adminManagement.changeOrderStatus(pedidos, id, estado));
+  const cambiarEstadoUsuario = (id: number) => setUsuarios(adminManagement.toggleUserStatus(usuarios, id));
   const agregarCategoria = (e: React.FormEvent) => {
     e.preventDefault();
     if (nuevaCategoria.trim()) {
-      setCategorias([...categorias, { id: Date.now(), nombre: nuevaCategoria }]);
+      setCategorias(adminManagement.addCategory(categorias, nuevaCategoria));
       setNuevaCategoria('');
     }
   };
-  const eliminarCategoria = (id: number) => setCategorias(categorias.filter((c) => c.id !== id));
+  const eliminarCategoria = (id: number) => setCategorias(adminManagement.removeCategory(categorias, id));
 
   // Productos filtrados para el inventario
-  const productosFiltrados = productos.filter((p) => {
-    const coincideCategoria = filtroCategoria === 'Todas' || p.categoria === filtroCategoria;
-    const coincideBusqueda = p.nombre.toLowerCase().includes(busquedaProducto.toLowerCase());
-    return coincideCategoria && coincideBusqueda;
-  });
+  const productosFiltrados = adminManagement.filterProducts(productos, filtroCategoria, busquedaProducto);
 
   // ==========================================
   // 4. RENDERIZADO DE LAS VISTAS
   // ==========================================
 
   const renderDashboard = () => {
-    const totalMesVentas = reportesPeriodos.reduce((acc, curr) => acc + curr.ventas, 0);
-    const totalPedidosMes = reportesPeriodos.reduce((acc, curr) => acc + curr.totalPedidos, 0);
-    const valorTotalInventario = productos.reduce((acc, p) => acc + p.precio * p.stock, 0);
-    const productosCriticos = productos.filter((p) => p.stock <= 2);
-    const totalUnidadesStock = productos.reduce((acc, p) => acc + p.stock, 0);
+    const { totalMesVentas, totalPedidosMes, valorTotalInventario, productosCriticos, totalUnidadesStock } = adminManagement.dashboard(productos, reportesPeriodos);
 
     return (
       <div className="space-y-8">
@@ -485,7 +387,7 @@ export default function AdminPage() {
                           : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                       }`}
                       value={p.estado}
-                      onChange={(e) => cambiarEstadoPedido(p.id, e.target.value as Pedido['estado'])}
+                      onChange={(e) => cambiarEstadoPedido(p.id, e.target.value as OrderStatus)}
                     >
                       <option value="Pendiente" className="bg-gray-900 text-white">
                         Pendiente
@@ -666,17 +568,10 @@ export default function AdminPage() {
           </div>
 
           <nav className="p-4 space-y-1.5">
-            {[
-              { id: 'dashboard', icono: '📊', nombre: 'Dashboard' },
-              { id: 'pedidos', icono: '📦', nombre: 'Pedidos' },
-              { id: 'productos', icono: '🏷️', nombre: 'Inventario' },
-              { id: 'categorias', icono: '📁', nombre: 'Categorías' },
-              { id: 'usuarios', icono: '👥', nombre: 'Usuarios' },
-              { id: 'configuracion', icono: '⚙️', nombre: 'Ajustes' },
-            ].map((menu) => (
+            {ADMIN_MENU.map((menu) => (
               <button
                 key={menu.id}
-                onClick={() => setVistaActual(menu.id as any)}
+                onClick={() => setVistaActual(menu.id)}
                 className={`w-full text-left px-4 py-3 rounded-2xl transition-all text-xs font-semibold flex items-center gap-3 ${
                   vistaActual === menu.id
                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'

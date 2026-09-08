@@ -1,27 +1,21 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { browserAuthSession } from '@/infrastructure/auth/BrowserAuthSession';
 
 export default function Navbar() {
   const router = useRouter();
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  // Verifica si el administrador ya inició sesión en este navegador
-  useEffect(() => {
-    const auth = localStorage.getItem('isAuthenticated');
-    const role = localStorage.getItem('userRole');
-    if (auth === 'true' && role === 'admin') {
-      setIsAdmin(true);
-    }
-  }, []);
+  const isAdmin = useSyncExternalStore(
+    (listener) => browserAuthSession.subscribe(listener),
+    () => browserAuthSession.isAdmin(),
+    () => false,
+  );
 
   // Función para borrar la sesión simulada
   const handleLogout = () => {
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('userRole');
-    setIsAdmin(false);
+    browserAuthSession.logout();
     router.push('/');
     router.refresh();
   };

@@ -3,6 +3,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { browserAuthSession } from '@/infrastructure/auth/BrowserAuthSession';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -26,6 +27,7 @@ export default function LoginPage() {
         // Simulamos la creación de un Token de sesión en el navegador
         localStorage.setItem('isAuthenticated', 'true');
         localStorage.setItem('userRole', 'admin');
+        browserAuthSession.notifyChange();
         
         // Redireccionamos al home o al futuro panel de administrador
         router.push('/admin');

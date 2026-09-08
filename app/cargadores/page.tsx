@@ -1,6 +1,4 @@
 // src/app/cargadores/page.tsx
-import Image from "next/image";
-
 export default function CargadoresPage() {
   return (
     <main className="max-w-7xl mx-auto px-6 py-16">
