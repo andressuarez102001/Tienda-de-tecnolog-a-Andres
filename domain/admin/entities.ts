@@ -4,10 +4,10 @@ export type UserRole = 'Admin' | 'Cliente';
 export type UserStatus = 'Activo' | 'Bloqueado';
 
 export interface ProductDraft {
-  nombre: string;
-  categoria: string;
-  precio: number;
-  stock: number;
+  readonly nombre: string;
+  readonly categoria: string;
+  readonly precio: number;
+  readonly stock: number;
 }
 
 /** Entidad de dominio: sus invariantes no dependen de React ni de la interfaz. */
@@ -25,7 +25,11 @@ export class Product {
     precio: number,
     stock: number,
   ) {
-    if (precio < 0 || stock < 0) throw new Error('El precio y el stock no pueden ser negativos.');
+    if (!Number.isInteger(id) || id < 1) throw new Error('El identificador del producto no es válido.');
+    if (!nombre.trim() || !categoria.trim()) throw new Error('El producto debe tener nombre y categoría.');
+    if (!Number.isFinite(precio) || !Number.isInteger(stock) || precio < 0 || stock < 0) {
+      throw new Error('El precio y el stock no son válidos.');
+    }
     this.productId = id;
     this.productName = nombre;
     this.productCategory = categoria;
@@ -66,7 +70,17 @@ export class Order {
 
   constructor(
     id: number, cliente: string, fecha: string, total: number, metodoPago: PaymentMethod, estado: OrderStatus,
-  ) { this.orderId = id; this.customerName = cliente; this.orderDate = fecha; this.orderTotal = total; this.paymentMethod = metodoPago; this.orderStatus = estado; }
+  ) {
+    if (!Number.isInteger(id) || id < 1 || !cliente.trim() || !fecha.trim() || total < 0) {
+      throw new Error('El pedido no es válido.');
+    }
+    this.orderId = id;
+    this.customerName = cliente;
+    this.orderDate = fecha;
+    this.orderTotal = total;
+    this.paymentMethod = metodoPago;
+    this.orderStatus = estado;
+  }
   get id(): number { return this.orderId; }
   get cliente(): string { return this.customerName; }
   get fecha(): string { return this.orderDate; }
@@ -88,7 +102,16 @@ export class User {
 
   constructor(
     id: number, nombre: string, email: string, rol: UserRole, estado: UserStatus,
-  ) { this.userId = id; this.userName = nombre; this.userEmail = email; this.userRole = rol; this.userStatus = estado; }
+  ) {
+    if (!Number.isInteger(id) || id < 1 || !nombre.trim() || !email.includes('@')) {
+      throw new Error('El usuario no es válido.');
+    }
+    this.userId = id;
+    this.userName = nombre;
+    this.userEmail = email;
+    this.userRole = rol;
+    this.userStatus = estado;
+  }
   get id(): number { return this.userId; }
   get nombre(): string { return this.userName; }
   get email(): string { return this.userEmail; }
@@ -101,7 +124,11 @@ export class User {
 }
 
 export class Category {
-  constructor(private readonly categoryId: number, private readonly categoryName: string) {}
+  constructor(private readonly categoryId: number, private readonly categoryName: string) {
+    if (!Number.isInteger(categoryId) || categoryId < 1 || !categoryName.trim()) {
+      throw new Error('La categoría no es válida.');
+    }
+  }
   get id(): number { return this.categoryId; }
   get nombre(): string { return this.categoryName; }
 }
@@ -115,7 +142,16 @@ export class PeriodReport {
 
   constructor(
     periodo: string, rangoFechas: string, totalPedidos: number, ventas: number, estado: string,
-  ) { this.reportPeriod = periodo; this.reportDateRange = rangoFechas; this.reportOrders = totalPedidos; this.reportSales = ventas; this.reportStatus = estado; }
+  ) {
+    if (!periodo.trim() || !rangoFechas.trim() || !estado.trim() || totalPedidos < 0 || ventas < 0) {
+      throw new Error('El reporte no es válido.');
+    }
+    this.reportPeriod = periodo;
+    this.reportDateRange = rangoFechas;
+    this.reportOrders = totalPedidos;
+    this.reportSales = ventas;
+    this.reportStatus = estado;
+  }
   get periodo(): string { return this.reportPeriod; }
   get rangoFechas(): string { return this.reportDateRange; }
   get totalPedidos(): number { return this.reportOrders; }
@@ -124,7 +160,7 @@ export class PeriodReport {
 }
 
 export interface StoreSettings {
-  nombreTienda: string;
-  costoEnvio: number;
-  emailContacto: string;
+  readonly nombreTienda: string;
+  readonly costoEnvio: number;
+  readonly emailContacto: string;
 }

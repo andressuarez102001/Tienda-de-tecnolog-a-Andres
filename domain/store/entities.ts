@@ -3,13 +3,13 @@
  * la forma en que finalmente se muestran los datos.
  */
 export interface StorefrontProductData {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  imageSrc: string;
-  category?: string;
-  stock?: number;
+  readonly id: string;
+  readonly name: string;
+  readonly description: string;
+  readonly price: number;
+  readonly imageSrc: string;
+  readonly category?: string;
+  readonly stock?: number;
 }
 
 export class StorefrontProduct {
@@ -23,6 +23,7 @@ export class StorefrontProduct {
 
   constructor(data: StorefrontProductData) {
     if (!data.id.trim() || !data.name.trim()) throw new Error('El producto debe tener identificador y nombre.');
+    if (!data.description.trim() || !data.imageSrc.trim()) throw new Error('El producto debe incluir descripción e imagen.');
     if (data.price < 0 || !Number.isFinite(data.price)) throw new Error('El precio del producto no es válido.');
     if ((data.stock ?? 1) < 0) throw new Error('El stock no puede ser negativo.');
     this.productId = data.id;
@@ -54,34 +55,6 @@ export class StorefrontProduct {
   }
 }
 
-export class CartLine {
-  private readonly lineProduct: StorefrontProduct;
-  private readonly lineQuantity: number;
-
-  constructor(product: StorefrontProduct, quantity: number) {
-    product.calculateTotal(quantity);
-    this.lineProduct = product;
-    this.lineQuantity = quantity;
-  }
-
-  get product(): StorefrontProduct { return this.lineProduct; }
-  get quantity(): number { return this.lineQuantity; }
-  subtotal(): number { return this.lineProduct.calculateTotal(this.lineQuantity); }
-}
-
-export class ShoppingCart {
-  private readonly lines: CartLine[];
-
-  constructor(lines: ReadonlyArray<CartLine> = []) { this.lines = [...lines]; }
-  items(): ReadonlyArray<CartLine> { return [...this.lines]; }
-  total(): number { return this.lines.reduce((total, line) => total + line.subtotal(), 0); }
-  add(product: StorefrontProduct, quantity: number): ShoppingCart {
-    const remaining = this.lines.filter((line) => line.product.id !== product.id);
-    const previousQuantity = this.lines.find((line) => line.product.id === product.id)?.quantity ?? 0;
-    return new ShoppingCart([...remaining, new CartLine(product, previousQuantity + quantity)]);
-  }
-}
-
 export class StoreUser {
   private readonly userEmail: string;
   private readonly userRole: 'admin' | 'cliente';
@@ -94,12 +67,4 @@ export class StoreUser {
 
   get email(): string { return this.userEmail; }
   isAdministrator(): boolean { return this.userRole === 'admin'; }
-}
-
-export class SalesReport {
-  constructor(private readonly reportSales: number, private readonly reportOrders: number) {
-    if (reportSales < 0 || reportOrders < 0) throw new Error('Los valores del reporte no pueden ser negativos.');
-  }
-  get sales(): number { return this.reportSales; }
-  get orders(): number { return this.reportOrders; }
 }

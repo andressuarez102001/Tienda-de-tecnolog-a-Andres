@@ -1,9 +1,9 @@
 // src/app/home-iphone/page.tsx
 import Image from "next/image";
 import Link from "next/link";
-import { StorefrontProduct } from '@/domain/store/entities';
+import { catalogService } from '@/application/store/createStoreServices';
 
-const FEATURED_PRODUCTS = [
+const FEATURED_PRODUCTS = catalogService.createProducts([
   {
     id: "funda-iphone-17",
     name: "Funda iPhone 17 Pro Max",
@@ -52,7 +52,7 @@ const FEATURED_PRODUCTS = [
     imageSrc: "/FUNDA-IPHONE-16-ROSA.jpg",
     category: "iPhone 16",
   },
-].map((product) => new StorefrontProduct(product));
+]);
 
 export default function HomeIphonePage() {
   return (
@@ -134,11 +134,7 @@ export default function HomeIphonePage() {
                 <div>
                   <span className="text-[10px] text-gray-400 block font-medium">Precio</span>
                   <span className="text-base font-bold text-white tracking-tight">
-                    {new Intl.NumberFormat("es-CO", {
-                      style: "currency",
-                      currency: "COP",
-                      maximumFractionDigits: 0,
-                    }).format(product.price)}
+                    {catalogService.formatPrice(product.price)}
                   </span>
                 </div>
 

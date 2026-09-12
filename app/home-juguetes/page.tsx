@@ -1,6 +1,7 @@
 // src/app/productos-top/page.tsx
 import Image from "next/image";
 import Link from 'next/link';
+import { catalogService } from '@/application/store/createStoreServices';
 
 const FEATURED_PRODUCTS = [
   {
@@ -74,11 +75,7 @@ export default function ProductosTopPage() {
             {/* Precio y Botón de Acción con Link Integrado */}
             <div className="mt-8 pt-4 border-t border-white/[0.04] flex items-center justify-between">
               <span className="text-xl font-medium text-gray-200">
-                {new Intl.NumberFormat('es-CO', { 
-                  style: 'currency', 
-                  currency: 'COP', 
-                  maximumFractionDigits: 0 
-                }).format(product.price)}
+                {catalogService.formatPrice(product.price)}
               </span>
               
               <Link 

@@ -5,10 +5,9 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { catalogService } from '@/application/store/createStoreServices';
-import { StorefrontProduct } from '@/domain/store/entities';
 
 const MI_TELEFONO = "573003256891";
-const DEFAULT_PRODUCT = new StorefrontProduct({
+const DEFAULT_PRODUCT = catalogService.createProduct({
   id: 'producto-generico',
   name: 'Funda Premium MagSafe',
   category: 'Ecosistema Apple',
@@ -72,16 +71,9 @@ export default function ProductDetailPage() {
 
   const precioTotal = catalogService.calculatePurchaseTotal(producto, cantidad);
 
-  const precioTotalFormateado = new Intl.NumberFormat('es-CO', {
-    style: 'currency',
-    currency: 'COP',
-    maximumFractionDigits: 0,
-  }).format(precioTotal);
-
-  const getWhatsAppLink = () => {
-    const colorNombre = coloresDisponibles[colorSeleccionado]?.nombre || 'Estándar';
-    return catalogService.createWhatsAppLink(producto, cantidad, colorNombre, MI_TELEFONO);
-  };
+  const precioTotalFormateado = catalogService.formatPrice(precioTotal);
+  const colorNombre = coloresDisponibles[colorSeleccionado]?.nombre || 'Estándar';
+  const whatsappPurchaseLink = catalogService.createWhatsAppLink(producto, cantidad, colorNombre, MI_TELEFONO);
 
   return (
     <div className="relative min-h-screen bg-[#050507] text-[#F5F5F7] font-sans selection:bg-[#0071E3] selection:text-white overflow-hidden antialiased">
@@ -253,7 +245,7 @@ export default function ProductDetailPage() {
             {/* BOTONES DE COMPRA DIRECTA */}
             <div className="space-y-3 pt-2">
               <a 
-                href={getWhatsAppLink()}
+                href={whatsappPurchaseLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full bg-gradient-to-r from-[#0071E3] to-[#005bb5] hover:from-[#0077ed] hover:to-[#0066cc] text-white font-bold py-4 px-6 rounded-full transition-all duration-300 shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 text-sm hover:scale-[1.02] active:scale-[0.98]"
@@ -262,7 +254,7 @@ export default function ProductDetailPage() {
               </a>
 
               <a 
-                href={getWhatsAppLink()}
+                href={whatsappPurchaseLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full bg-white text-black hover:bg-gray-100 font-bold py-4 px-6 rounded-full transition-all duration-300 flex items-center justify-center gap-2 text-sm hover:scale-[1.02] active:scale-[0.98]"

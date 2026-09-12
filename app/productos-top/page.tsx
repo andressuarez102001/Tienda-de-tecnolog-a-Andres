@@ -1,9 +1,9 @@
 // src/app/productos-top/page.tsx
 import Image from "next/image";
 import Link from "next/link";
-import { StorefrontProduct } from '@/domain/store/entities';
+import { catalogService } from '@/application/store/createStoreServices';
 
-const FEATURED_PRODUCTS = [
+const FEATURED_PRODUCTS = catalogService.createProducts([
   {
     id: "funda-iphone-17",
     name: "Funda iPhone 17 Pro Max",
@@ -116,25 +116,11 @@ const FEATURED_PRODUCTS = [
     imageSrc: "/TRIMMER.jpg",
     category: "Cuidado Personal",
   },
-].map((product) => new StorefrontProduct(product));
+]);
 
 const MI_TELEFONO = "573003256891";
 
 export default function ProductosTopPage() {
-  // Función helper para generar el link de WhatsApp dinámico según el producto
-  const getWhatsAppLink = (productName: string, productPrice: number) => {
-    const precioFormateado = new Intl.NumberFormat("es-CO", {
-      style: "currency",
-      currency: "COP",
-      maximumFractionDigits: 0,
-    }).format(productPrice);
-
-    const mensaje = encodeURIComponent(
-      `Hola ShenzhenStock! Me interesa comprar el producto: ${productName} por valor de ${precioFormateado}. ¿Tienen disponibilidad para envío inmediato?`
-    );
-    return `https://wa.me/${MI_TELEFONO}?text=${mensaje}`;
-  };
-
   return (
     <main className="relative min-h-screen bg-[#08080a] text-white pt-28 pb-24 px-4 sm:px-6 lg:px-8 selection:bg-blue-500 selection:text-white overflow-hidden">
       {/* 🌌 AMBIENT GLOW BACKGROUND */}
@@ -213,16 +199,12 @@ export default function ProductosTopPage() {
                 <div>
                   <span className="text-[10px] text-gray-400 block font-medium">Precio Final</span>
                   <span className="text-base font-bold text-white tracking-tight">
-                    {new Intl.NumberFormat("es-CO", {
-                      style: "currency",
-                      currency: "COP",
-                      maximumFractionDigits: 0,
-                    }).format(product.price)}
+                    {catalogService.formatPrice(product.price)}
                   </span>
                 </div>
 
                 <a
-                  href={getWhatsAppLink(product.name, product.price)}
+                  href={catalogService.createCatalogInquiryLink(product, MI_TELEFONO)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-semibold py-2.5 px-4 rounded-full transition-all duration-300 shadow-md shadow-blue-500/20 hover:scale-105 flex items-center gap-1.5"
