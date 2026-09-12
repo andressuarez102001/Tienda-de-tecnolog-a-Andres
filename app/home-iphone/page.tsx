@@ -1,17 +1,9 @@
 // src/app/home-iphone/page.tsx
 import Image from "next/image";
 import Link from "next/link";
+import { StorefrontProduct } from '@/domain/store/entities';
 
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  imageSrc: string;
-  category?: string;
-}
-
-const FEATURED_PRODUCTS: Product[] = [
+const FEATURED_PRODUCTS = [
   {
     id: "funda-iphone-17",
     name: "Funda iPhone 17 Pro Max",
@@ -60,7 +52,7 @@ const FEATURED_PRODUCTS: Product[] = [
     imageSrc: "/FUNDA-IPHONE-16-ROSA.jpg",
     category: "iPhone 16",
   },
-];
+].map((product) => new StorefrontProduct(product));
 
 export default function HomeIphonePage() {
   return (

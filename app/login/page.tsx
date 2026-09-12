@@ -3,7 +3,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { browserAuthSession } from '@/infrastructure/auth/BrowserAuthSession';
+import { authenticationService } from '@/application/store/createStoreServices';
+
 
 export default function LoginPage() {
   const router = useRouter();
@@ -21,17 +22,10 @@ export default function LoginPage() {
 
     // SIMULACIÓN DE PETICIÓN ASÍNCRONA A UNA API (Retraso de 1.5 segundos)
     setTimeout(() => {
-      // Credenciales quemadas de forma temporal para pruebas locales
-      if (email === 'admin@tecnostore.com' && password === 'admin123') {
-        
-        // Simulamos la creación de un Token de sesión en el navegador
-        localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('userRole', 'admin');
-        browserAuthSession.notifyChange();
-        
-        // Redireccionamos al home o al futuro panel de administrador
-        router.push('/admin');
-        router.refresh(); 
+      if (authenticationService.signIn(email, password)) {
+        // La sesión notifica al Navbar una sola vez; la navegación no debe
+        // encadenar un refresh global adicional.
+        router.replace('/admin');
       } else {
         setError('Credenciales incorrectas. Intenta con admin@tecnostore.com y admin123');
         setIsLoading(false);

@@ -4,8 +4,19 @@ import React, { useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { catalogService } from '@/application/store/createStoreServices';
+import { StorefrontProduct } from '@/domain/store/entities';
 
 const MI_TELEFONO = "573003256891";
+const DEFAULT_PRODUCT = new StorefrontProduct({
+  id: 'producto-generico',
+  name: 'Funda Premium MagSafe',
+  category: 'Ecosistema Apple',
+  price: 25000,
+  stock: 15,
+  imageSrc: '/FUNDA-IPHONE-17.jpg',
+  description: 'Diseño ultra elegante con bordes biselados, protección anticaídas de grado militar y compatibilidad completa con accesorios MagSafe.',
+});
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -16,34 +27,6 @@ export default function ProductDetailPage() {
   const [colorSeleccionado, setColorSeleccionado] = useState(0);
   const [cantidad, setCantidad] = useState(1);
 
-  // Base de datos de productos con acabado estilo Apple Store
-  const baseDeDatos = [
-    { 
-      id: 'funda-iphone-17', 
-      nombre: 'Funda iPhone 17 Pro Max con MagSafe', 
-      categoria: 'Fundas & Protección', 
-      precio: 25000, 
-      stock: 10, 
-      descripcion: 'Diseñada para complementar tu dispositivo. Su acabado exterior de silicona resulta muy agradable al tacto y el interior está forrado de suave microfibra para proteger tu iPhone.' 
-    },
-    { 
-      id: 'funda-iphone-14-roja', 
-      nombre: 'Funda iPhone 14 Roja MagSafe', 
-      categoria: 'Fundas & Protección', 
-      precio: 20000, 
-      stock: 30, 
-      descripcion: 'Silicona líquida de primera calidad con tecnología de absorción de impactos y alineación magnética perfecta.' 
-    },
-    { 
-      id: 'cargador-iphone', 
-      nombre: 'Adaptador de Corriente USB-C de 20W', 
-      categoria: 'Cargadores & Energía', 
-      precio: 45000, 
-      stock: 120, 
-      descripcion: 'Carga ultrarrápida e inteligente diseñada para cargar tu iPhone de 0 a 50% en solo 30 minutos.' 
-    }
-  ];
-
   const coloresDisponibles = [
     { nombre: 'Transparente MagSafe', hex: '#E5E7EB', border: 'border-white' },
     { nombre: 'Rosa Pastel', hex: '#EC4899', border: 'border-pink-500' },
@@ -51,16 +34,7 @@ export default function ProductDetailPage() {
     { nombre: 'Negro Titanio', hex: '#111827', border: 'border-gray-700' },
   ];
 
-  const productoEncontrado = baseDeDatos.find(p => p.id === idProducto);
-  
-  const producto = productoEncontrado || {
-    id: idProducto,
-    nombre: 'Funda Premium MagSafe',
-    categoria: 'Ecosistema Apple',
-    precio: 25000,
-    stock: 15,
-    descripcion: 'Diseño ultra elegante con bordes biselados, protección anticaídas de grado militar y compatibilidad completa con accesorios MagSafe.'
-  };
+  const producto = catalogService.getProduct(idProducto) ?? DEFAULT_PRODUCT;
 
   const galeriaPorProducto: { [key: string]: string[] } = {
     'funda-iphone-17': [
@@ -96,7 +70,7 @@ export default function ProductDetailPage() {
     'Disfruta de la alineación automática con tus accesorios MagSafe.'
   ];
 
-  const precioTotal = producto.precio * cantidad;
+  const precioTotal = catalogService.calculatePurchaseTotal(producto, cantidad);
 
   const precioTotalFormateado = new Intl.NumberFormat('es-CO', {
     style: 'currency',
@@ -106,10 +80,7 @@ export default function ProductDetailPage() {
 
   const getWhatsAppLink = () => {
     const colorNombre = coloresDisponibles[colorSeleccionado]?.nombre || 'Estándar';
-    const mensaje = encodeURIComponent(
-      `Hola ShenzhenStock! Quisiera realizar la compra oficial de: ${producto.nombre} (Acabado: ${colorNombre}, Cantidad: ${cantidad} uds) por un valor de ${precioTotalFormateado}. ¿Tienen disponibilidad?`
-    );
-    return `https://wa.me/${MI_TELEFONO}?text=${mensaje}`;
+    return catalogService.createWhatsAppLink(producto, cantidad, colorNombre, MI_TELEFONO);
   };
 
   return (
@@ -146,12 +117,12 @@ export default function ProductDetailPage() {
           {/* Tarjeta Principal de Presentación del Producto */}
           <div className="w-full h-[420px] sm:h-[520px] relative rounded-3xl overflow-hidden bg-gradient-to-b from-gray-900/90 via-[#0a0a0d] to-black border border-white/10 flex items-center justify-center p-8 shadow-2xl backdrop-blur-md group">
             <span className="absolute top-6 left-6 bg-white/5 backdrop-blur-xl border border-white/10 text-blue-400 text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full shadow-lg">
-              {producto.categoria}
+              {producto.category}
             </span>
 
             <Image
               src={imagenesGaleria[imagenActiva] || imagenesGaleria[0]} 
-              alt={producto.nombre} 
+              alt={producto.name}
               fill
               sizes="(max-width: 1024px) 100vw, 58vw"
               className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-700 ease-out"
@@ -214,11 +185,11 @@ export default function ProductDetailPage() {
             </span>
 
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
-              {producto.nombre}
+              {producto.name}
             </h1>
 
             <p className="text-sm text-gray-400 font-normal leading-relaxed mt-4">
-              {producto.descripcion}
+              {producto.description}
             </p>
           </div>
 

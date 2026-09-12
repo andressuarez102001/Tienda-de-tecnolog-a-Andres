@@ -1,17 +1,9 @@
 // src/app/productos-top/page.tsx
 import Image from "next/image";
 import Link from "next/link";
+import { StorefrontProduct } from '@/domain/store/entities';
 
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  imageSrc: string;
-  category?: string;
-}
-
-const FEATURED_PRODUCTS: Product[] = [
+const FEATURED_PRODUCTS = [
   {
     id: "funda-iphone-17",
     name: "Funda iPhone 17 Pro Max",
@@ -124,7 +116,7 @@ const FEATURED_PRODUCTS: Product[] = [
     imageSrc: "/TRIMMER.jpg",
     category: "Cuidado Personal",
   },
-];
+].map((product) => new StorefrontProduct(product));
 
 const MI_TELEFONO = "573003256891";
 

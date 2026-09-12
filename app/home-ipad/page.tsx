@@ -1,17 +1,9 @@
 // src/app/home-ipad/page.tsx
 import Image from "next/image";
 import Link from "next/link";
+import { StorefrontProduct } from '@/domain/store/entities';
 
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  imageSrc: string;
-  category?: string;
-}
-
-const FEATURED_PRODUCTS: Product[] = [
+const FEATURED_PRODUCTS = [
   {
     id: "funda-ipad-pro-1",
     name: "Funda iPad Pro Smart Folio",
@@ -52,7 +44,7 @@ const FEATURED_PRODUCTS: Product[] = [
     imageSrc: "/FUNDA-IPAD-3.jpg",
     category: "iPad Pro",
   },
-];
+].map((product) => new StorefrontProduct(product));
 
 const MI_TELEFONO = "573003256891";
 

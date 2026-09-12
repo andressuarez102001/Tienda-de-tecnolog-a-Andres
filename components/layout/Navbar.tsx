@@ -2,22 +2,22 @@
 
 import { useSyncExternalStore } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { browserAuthSession } from '@/infrastructure/auth/BrowserAuthSession';
 
+// Mantiene la hidratación determinista y evita recrear el callback de SSR.
+const getServerAdminSnapshot = (): boolean => false;
+
 export default function Navbar() {
-  const router = useRouter();
   const isAdmin = useSyncExternalStore(
-    (listener) => browserAuthSession.subscribe(listener),
-    () => browserAuthSession.isAdmin(),
-    () => false,
+    browserAuthSession.subscribeToChanges,
+    browserAuthSession.getAdminSnapshot,
+    getServerAdminSnapshot,
   );
 
-  // Función para borrar la sesión simulada
+  // El cierre de sesión sólo actualiza el almacén de autenticación. No debe
+  // iniciar una navegación y un refresh en la misma interacción.
   const handleLogout = () => {
     browserAuthSession.logout();
-    router.push('/');
-    router.refresh();
   };
 
   return (

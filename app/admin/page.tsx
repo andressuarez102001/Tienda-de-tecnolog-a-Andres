@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
-import { createAdminManagementService } from '@/application/admin/createAdminManagementService';
+import React, { useMemo, useState } from 'react';
+import { adminManagementService } from '@/application/admin/createAdminManagementService';
 import { type OrderStatus, type Product, type ProductDraft } from '@/domain/admin/entities';
 
 // Composition root: la UI depende del caso de uso, no de una fuente de datos concreta.
-const adminManagement = createAdminManagementService();
+const adminManagement = adminManagementService;
 type AdminView = 'dashboard' | 'productos' | 'pedidos' | 'usuarios' | 'categorias' | 'configuracion';
 const ADMIN_MENU: ReadonlyArray<{ id: AdminView; icono: string; nombre: string }> = [
   { id: 'dashboard', icono: '📊', nombre: 'Dashboard' }, { id: 'pedidos', icono: '📦', nombre: 'Pedidos' }, { id: 'productos', icono: '🏷️', nombre: 'Inventario' }, { id: 'categorias', icono: '📁', nombre: 'Categorías' }, { id: 'usuarios', icono: '👥', nombre: 'Usuarios' }, { id: 'configuracion', icono: '⚙️', nombre: 'Ajustes' },
@@ -60,15 +60,29 @@ export default function AdminPage() {
   };
   const eliminarCategoria = (id: number) => setCategorias(adminManagement.removeCategory(categorias, id));
 
-  // Productos filtrados para el inventario
-  const productosFiltrados = adminManagement.filterProducts(productos, filtroCategoria, busquedaProducto);
+  // Lecturas derivadas, sin setters ni observadores: se recalculan solo al cambiar datos primitivos.
+  const productosFiltrados = useMemo(
+    () => adminManagement.filterProducts(productos, filtroCategoria, busquedaProducto),
+    [productos, filtroCategoria, busquedaProducto],
+  );
+  // La lista de opciones depende exclusivamente del estado de categorías. Al
+  // conservar su referencia entre renders evitamos que los controles que la
+  // consumen reciban una colección nueva en cada interacción.
+  const categoriasDisponibles = useMemo(
+    () => categorias.map((categoria) => ({ id: categoria.id, nombre: categoria.nombre })),
+    [categorias],
+  );
+  const dashboard = useMemo(
+    () => adminManagement.dashboard(productos, reportesPeriodos),
+    [productos, reportesPeriodos],
+  );
 
   // ==========================================
   // 4. RENDERIZADO DE LAS VISTAS
   // ==========================================
 
   const renderDashboard = () => {
-    const { totalMesVentas, totalPedidosMes, valorTotalInventario, productosCriticos, totalUnidadesStock } = adminManagement.dashboard(productos, reportesPeriodos);
+    const { totalMesVentas, totalPedidosMes, valorTotalInventario, productosCriticos, totalUnidadesStock } = dashboard;
 
     return (
       <div className="space-y-8">
@@ -233,10 +247,15 @@ export default function AdminPage() {
         <select
           className="border border-white/10 bg-black/50 p-3 rounded-2xl outline-none focus:border-blue-500 text-white text-xs"
           value={filtroCategoria}
-          onChange={(e) => setFiltroCategoria(e.target.value)}
+          onChange={(e) => {
+            const siguienteFiltro = e.target.value;
+            setFiltroCategoria((filtroActual) =>
+              filtroActual === siguienteFiltro ? filtroActual : siguienteFiltro,
+            );
+          }}
         >
           <option value="Todas" className="bg-gray-900 text-white">Todas las Categorías</option>
-          {categorias.map((c) => (
+          {categoriasDisponibles.map((c) => (
             <option key={c.id} value={c.nombre} className="bg-gray-900 text-white">
               {c.nombre}
             </option>
@@ -263,7 +282,7 @@ export default function AdminPage() {
               value={formData.categoria}
               onChange={(e) => setFormData({ ...formData, categoria: e.target.value })}
             >
-              {categorias.map((c) => (
+              {categoriasDisponibles.map((c) => (
                 <option key={c.id} value={c.nombre} className="bg-gray-900 text-white">
                   {c.nombre}
                 </option>
@@ -571,7 +590,9 @@ export default function AdminPage() {
             {ADMIN_MENU.map((menu) => (
               <button
                 key={menu.id}
-                onClick={() => setVistaActual(menu.id)}
+                onClick={() => {
+                  setVistaActual((vista) => (vista === menu.id ? vista : menu.id));
+                }}
                 className={`w-full text-left px-4 py-3 rounded-2xl transition-all text-xs font-semibold flex items-center gap-3 ${
                   vistaActual === menu.id
                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
