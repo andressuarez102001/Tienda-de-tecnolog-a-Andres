@@ -55,6 +55,28 @@ export class StorefrontProduct {
   }
 }
 
+// Demostración de Herencia y Polimorfismo para la sustentación
+export class ProductoFisico extends StorefrontProduct {
+  private readonly pesoGramos: number;
+
+  constructor(data: StorefrontProductData, peso: number) {
+    super(data);
+    if (peso <= 0) throw new Error('El peso físico debe ser mayor a cero.');
+    this.pesoGramos = peso;
+  }
+
+  get peso(): number {
+    return this.pesoGramos;
+  }
+
+  // Polimorfismo: Sobrescribe el método original para agregar costo de envío
+  calculateTotal(quantity: number): number {
+    const costoBase = super.calculateTotal(quantity);
+    const costoEnvio = (this.pesoGramos / 1000) * 5000; // $5000 COP por cada Kilo
+    return costoBase + costoEnvio;
+  }
+}
+
 export class StoreUser {
   private readonly userEmail: string;
   private readonly userRole: 'admin' | 'cliente';
