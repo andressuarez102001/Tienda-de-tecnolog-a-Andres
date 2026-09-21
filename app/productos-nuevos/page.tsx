@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { catalogService } from '@/application/store/createStoreServices';
+import { priceFormatter } from '@/application/store/createStoreServices';
 
 // 2. ESTRUCTURA DE DATOS (NOVEDADES DEL MERCADO)
 const NEW_ARRIVALS = [
@@ -115,7 +115,7 @@ export default function ProductosRecientesPage() {
             {/* Sección de Precio y Botón de Compra */}
             <div className="mt-8 pt-4 border-t border-white/[0.04] flex items-center justify-between">
               <span className="text-xl font-medium text-gray-200">
-                {catalogService.formatPrice(product.price)}
+                {priceFormatter.format(product.price)}
               </span>
               
               <button className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium py-2 px-5 rounded-full transition-colors tracking-wide shadow-md">

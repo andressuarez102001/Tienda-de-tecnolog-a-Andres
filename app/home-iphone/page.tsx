@@ -1,7 +1,7 @@
 // src/app/home-iphone/page.tsx
 import Image from "next/image";
 import Link from "next/link";
-import { catalogService } from '@/application/store/createStoreServices';
+import { catalogService, priceFormatter } from '@/application/store/createStoreServices';
 
 const FEATURED_PRODUCTS = catalogService.createProducts([
   {
@@ -134,7 +134,7 @@ export default function HomeIphonePage() {
                 <div>
                   <span className="text-[10px] text-gray-400 block font-medium">Precio</span>
                   <span className="text-base font-bold text-white tracking-tight">
-                    {catalogService.formatPrice(product.price)}
+                    {priceFormatter.format(product.price)}
                   </span>
                 </div>
 

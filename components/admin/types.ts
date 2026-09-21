@@ -1,0 +1,1 @@
+export type AdminView = 'dashboard' | 'productos' | 'pedidos' | 'usuarios' | 'categorias' | 'configuracion';

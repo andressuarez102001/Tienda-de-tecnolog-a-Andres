@@ -1,16 +1,27 @@
 import type { AuthSession } from '@/domain/store/contracts';
 import { StoreUser } from '@/domain/store/entities';
+import { AuthSessionStorage } from './AuthSessionStorage';
 
+/**
+ * Responsabilidad única: ciclo de vida de la sesión y notificación de cambios
+ * (eventos del navegador + integración con React). La persistencia en
+ * localStorage queda delegada en AuthSessionStorage.
+ */
 export class BrowserAuthSession implements AuthSession {
   private static readonly changeEvent = 'auth-session-change';
+  private readonly storage: AuthSessionStorage;
   private adminSnapshot = false;
+
+  constructor(storage: AuthSessionStorage = new AuthSessionStorage()) {
+    this.storage = storage;
+  }
 
   /** Referencias estables para useSyncExternalStore; evita resuscripciones por render. */
   readonly subscribeToChanges = (listener: () => void): (() => void) => this.subscribe(listener);
   readonly getAdminSnapshot = (): boolean => this.adminSnapshot;
 
   private refreshSnapshot(): void {
-    this.adminSnapshot = localStorage.getItem('isAuthenticated') === 'true' && localStorage.getItem('userRole') === 'admin';
+    this.adminSnapshot = this.storage.isAuthenticatedAdmin();
   }
 
   currentUser(): StoreUser | undefined {
@@ -43,14 +54,12 @@ export class BrowserAuthSession implements AuthSession {
   }
 
   start(user: StoreUser): void {
-    localStorage.setItem('isAuthenticated', 'true');
-    localStorage.setItem('userRole', user.isAdministrator() ? 'admin' : 'cliente');
+    this.storage.save(user.isAdministrator() ? 'admin' : 'cliente');
     this.notifyChange();
   }
 
   end(): void {
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('userRole');
+    this.storage.clear();
     this.notifyChange();
   }
 

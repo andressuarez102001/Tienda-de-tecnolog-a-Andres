@@ -1,6 +1,11 @@
 import type { ProductRepository } from '@/domain/store/contracts';
 import { StorefrontProduct, type StorefrontProductData } from '@/domain/store/entities';
 
+/**
+ * Responsabilidad única: gestión del catálogo (consulta y creación de productos).
+ * El formateo de precios y los enlaces de WhatsApp viven en sus propios
+ * servicios de presentación (PriceFormatter y WhatsAppLinkBuilder).
+ */
 export class CatalogService {
   constructor(private readonly products: ProductRepository) {}
 
@@ -12,33 +17,5 @@ export class CatalogService {
 
   createProducts(data: ReadonlyArray<StorefrontProductData>): ReadonlyArray<StorefrontProduct> {
     return data.map((product) => this.createProduct(product));
-  }
-
-  calculatePurchaseTotal(product: StorefrontProduct, quantity: number): number {
-    return product.calculateTotal(quantity);
-  }
-
-  formatPrice(amount: number): string {
-    if (!Number.isFinite(amount) || amount < 0) throw new Error('El precio no es válido.');
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      maximumFractionDigits: 0,
-    }).format(amount);
-  }
-
-  createWhatsAppLink(product: StorefrontProduct, quantity: number, color: string, phone: string): string {
-    const total = this.formatPrice(this.calculatePurchaseTotal(product, quantity));
-    const message = encodeURIComponent(
-      `Hola ShenzhenStock! Quisiera realizar la compra oficial de: ${product.name} (Acabado: ${color}, Cantidad: ${quantity} uds) por un valor de ${total}. ¿Tienen disponibilidad?`,
-    );
-    return `https://wa.me/${phone}?text=${message}`;
-  }
-
-  createCatalogInquiryLink(product: StorefrontProduct, phone: string): string {
-    const message = encodeURIComponent(
-      `Hola ShenzhenStock! Me interesa comprar el producto: ${product.name} por valor de ${this.formatPrice(product.price)}. ¿Tienen disponibilidad para envío inmediato?`,
-    );
-    return `https://wa.me/${phone}?text=${message}`;
   }
 }

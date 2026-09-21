@@ -1,6 +1,6 @@
 /**
- * Entidades del dominio de la tienda. No conocen React, Next, localStorage ni
- * la forma en que finalmente se muestran los datos.
+ * 
+ *
  */
 export interface StorefrontProductData {
   readonly id: string;
@@ -12,6 +12,7 @@ export interface StorefrontProductData {
   readonly stock?: number;
 }
 
+
 export class StorefrontProduct {
   private readonly productId: string;
   private readonly productName: string;
@@ -20,6 +21,8 @@ export class StorefrontProduct {
   private readonly productImageSrc: string;
   private readonly productCategory?: string;
   private readonly availableStock: number;
+
+
 
   constructor(data: StorefrontProductData) {
     if (!data.id.trim() || !data.name.trim()) throw new Error('El producto debe tener identificador y nombre.');
@@ -35,6 +38,8 @@ export class StorefrontProduct {
     this.availableStock = data.stock ?? 1;
   }
 
+
+
   get id(): string { return this.productId; }
   get name(): string { return this.productName; }
   get description(): string { return this.productDescription; }
@@ -42,6 +47,8 @@ export class StorefrontProduct {
   get imageSrc(): string { return this.productImageSrc; }
   get category(): string | undefined { return this.productCategory; }
   get stock(): number { return this.availableStock; }
+
+
 
   calculateTotal(quantity: number): number {
     if (!Number.isInteger(quantity) || quantity < 1 || quantity > this.availableStock) {
@@ -55,7 +62,10 @@ export class StorefrontProduct {
   }
 }
 
+
+
 // Demostración de Herencia y Polimorfismo para la sustentación
+
 export class ProductoFisico extends StorefrontProduct {
   private readonly pesoGramos: number;
 
@@ -69,13 +79,15 @@ export class ProductoFisico extends StorefrontProduct {
     return this.pesoGramos;
   }
 
-  // Polimorfismo: Sobrescribe el método original para agregar costo de envío
+ 
   calculateTotal(quantity: number): number {
     const costoBase = super.calculateTotal(quantity);
     const costoEnvio = (this.pesoGramos / 1000) * 5000; // $5000 COP por cada Kilo
     return costoBase + costoEnvio;
   }
 }
+
+
 
 export class StoreUser {
   private readonly userEmail: string;

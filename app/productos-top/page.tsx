@@ -1,7 +1,7 @@
 // src/app/productos-top/page.tsx
 import Image from "next/image";
 import Link from "next/link";
-import { catalogService } from '@/application/store/createStoreServices';
+import { catalogService, priceFormatter, whatsappLinkBuilder } from '@/application/store/createStoreServices';
 
 const FEATURED_PRODUCTS = catalogService.createProducts([
   {
@@ -199,12 +199,12 @@ export default function ProductosTopPage() {
                 <div>
                   <span className="text-[10px] text-gray-400 block font-medium">Precio Final</span>
                   <span className="text-base font-bold text-white tracking-tight">
-                    {catalogService.formatPrice(product.price)}
+                    {priceFormatter.format(product.price)}
                   </span>
                 </div>
 
                 <a
-                  href={catalogService.createCatalogInquiryLink(product, MI_TELEFONO)}
+                  href={whatsappLinkBuilder.createCatalogInquiryLink(product, MI_TELEFONO)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-semibold py-2.5 px-4 rounded-full transition-all duration-300 shadow-md shadow-blue-500/20 hover:scale-105 flex items-center gap-1.5"

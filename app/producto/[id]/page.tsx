@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { catalogService } from '@/application/store/createStoreServices';
+import { catalogService, priceFormatter, whatsappLinkBuilder } from '@/application/store/createStoreServices';
 
 const MI_TELEFONO = "573003256891";
 const DEFAULT_PRODUCT = catalogService.createProduct({
@@ -33,6 +33,11 @@ export default function ProductDetailPage() {
     { nombre: 'Negro Titanio', hex: '#111827', border: 'border-gray-700' },
   ];
 
+
+
+
+
+  
   const producto = catalogService.getProduct(idProducto) ?? DEFAULT_PRODUCT;
 
   const galeriaPorProducto: { [key: string]: string[] } = {
@@ -69,11 +74,17 @@ export default function ProductDetailPage() {
     'Disfruta de la alineación automática con tus accesorios MagSafe.'
   ];
 
-  const precioTotal = catalogService.calculatePurchaseTotal(producto, cantidad);
 
-  const precioTotalFormateado = catalogService.formatPrice(precioTotal);
+
+
+
+
+
+  const precioTotal = producto.calculateTotal(cantidad);
+
+  const precioTotalFormateado = priceFormatter.format(precioTotal);
   const colorNombre = coloresDisponibles[colorSeleccionado]?.nombre || 'Estándar';
-  const whatsappPurchaseLink = catalogService.createWhatsAppLink(producto, cantidad, colorNombre, MI_TELEFONO);
+  const whatsappPurchaseLink = whatsappLinkBuilder.createPurchaseLink(producto, cantidad, colorNombre, MI_TELEFONO);
 
   return (
     <div className="relative min-h-screen bg-[#050507] text-[#F5F5F7] font-sans selection:bg-[#0071E3] selection:text-white overflow-hidden antialiased">
