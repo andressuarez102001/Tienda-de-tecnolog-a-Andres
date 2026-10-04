@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: tecnostore-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: shenzhen
+      POSTGRES_PASSWORD: shenzhenstock-dev-password-change-me
+      POSTGRES_DB: tienda
+    ports:
+      # 5433 en el host: en máquinas con un PostgreSQL nativo ya tomado en 5432,
+      # ambos conviven sin conflicto. Ajusta aquí si prefieres otro puerto.
+      - "5433:5432"
+    volumes:
+      - postgres_datos:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shenzhen -d tienda"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_datos:

@@ -1,95 +1,46 @@
-// src/app/productos-top/page.tsx
-import Image from "next/image";
-import Link from 'next/link';
-import { priceFormatter } from '@/application/store/createStoreServices';
+'use client';
 
-const FEATURED_PRODUCTS = [
-  {
-    id: "lego",
-    name: "Set de Ladrillos LEGO CITY",
-    description: "Set de ladrillos para construir tu propio universo de diversión y creatividad.",
-    price: 43000,
-    imageSrc: "/LEGO.jpg",
-  },
+import Image from 'next/image';
+import { ProductCollection } from '@/domain/shared/enums';
+import { useServicios } from '@/presentation/ServiciosProvider';
+import { useDatos } from '@/presentation/useDatos';
+import { PaginaCatalogo } from '@/presentation/catalog/PaginaCatalogo';
+import { CabeceraCatalogo, GrillaProductos } from '@/presentation/catalog/CabeceraCatalogo';
+import { EsqueletoGrilla, EstadoError } from '@/presentation/catalog/Estados';
 
-   {
-    id: "dinosaurio",
-    name: "Dinosaurio de peluche",
-    description: "Un adorable dinosaurio de peluche para que tus hijos lo tengan siempre cerca.",
-    price: 15000,
-    imageSrc: "/dinosaurio.jpg",
-  },
-  
-];
+/** Página de la colección de juguetes y entretenimiento. */
+export default function HomeJuguetesPage() {
+  const { catalogo } = useServicios();
+  const { datos: productos, cargando, error, refrescar } = useDatos(() =>
+    catalogo.listarPorColeccion(ProductCollection.Juguetes),
+  );
 
-export default function ProductosTopPage() {
   return (
-    <main className="max-w-6xl mx-auto px-6 pt-32 pb-24 bg-black min-h-screen">
-      
-      {/* ENCABEZADO ESTILO APPLE */}
-      <div className="mb-16">
-        <h1 className="text-4xl md:text-5xl font-bold mb-3 text-white tracking-tight leading-tight">
-          Catálogo de Productos para la diversion y entretenimiento de tus hijos!
-        </h1>
-        <p className="text-gray-400 text-base md:text-lg font-light max-w-xl">
-          la mejor selección de juguetes y productos para el entretenimiento de tus hijos, con la calidad y seguridad que merecen.
-        </p>
+    <PaginaCatalogo>
+      <div className="relative w-full h-52 sm:h-72 rounded-3xl overflow-hidden border border-white/10 mb-12 bg-gradient-to-br from-amber-900/25 to-black">
+        <Image
+          src="/JUGUETES.jpg"
+          alt="Juguetes y entretenimiento"
+          fill
+          priority
+          className="object-cover opacity-60"
+        />
       </div>
 
-      {/* GRILLA PREMIUM DE PRODUCTOS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {FEATURED_PRODUCTS.map((product) => (
-          <div 
-            key={product.id} 
-            className="bg-[#121212] border border-white/[0.02] rounded-3xl p-6 flex flex-col justify-between transition-all duration-300 hover:bg-[#1c1c1e] hover:scale-[1.02] group"
-          >
-            {/* ENVOLVEMOS EL CONTENIDO CLIQUEABLE CON LINK */}
-            <Link href={`/producto/${product.id}`} className="flex flex-col flex-1 cursor-pointer">
-              <div>
-                {/* Contenedor de Imagen */}
-                <div className="w-full h-64 relative overflow-hidden rounded-2xl mb-6 bg-[#f5f5f7] flex justify-center items-center transition-transform duration-500 group-hover:scale-[1.01]">
-                  <Image 
-                    src={product.imageSrc}
-                    alt={product.name}
-                    width={400}       
-                    height={400}
-                    className="w-full h-full object-contain p-4 mix-blend-multiply" 
-                  />
-                </div>
+      <CabeceraCatalogo
+        etiqueta="Diversión y Entretenimiento"
+        titulo="Productos para la diversión de tus hijos"
+        descripcion="Ladrillos, peluches y accesorios pensados para acompañar sus momentos de juego."
+        cantidad={productos?.length ?? 0}
+      />
 
-                {/* Etiqueta sutil superior */}
-                <span className="text-[11px] font-medium text-blue-500 tracking-wider uppercase block mb-1">
-                  Disponible
-                </span>
-
-                {/* Textos del Producto */}
-                <h4 className="text-xl font-semibold text-white tracking-tight group-hover:text-blue-400 transition-colors">
-                  {product.name}
-                </h4>
-                <p className="text-sm text-gray-400 mt-2 font-light leading-relaxed">
-                  {product.description}
-                </p>
-              </div>
-            </Link>
-            
-            {/* Precio y Botón de Acción con Link Integrado */}
-            <div className="mt-8 pt-4 border-t border-white/[0.04] flex items-center justify-between">
-              <span className="text-xl font-medium text-gray-200">
-                {priceFormatter.format(product.price)}
-              </span>
-              
-              <Link 
-                href={`/producto/${product.id}`}
-                className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium py-2 px-4 rounded-full transition-colors tracking-wide"
-              >
-                Comprar
-              </Link>
-            </div>
-
-          </div>
-        ))}
-      </div>
-
-    </main>
+      {error ? (
+        <EstadoError mensaje={error} onReintentar={refrescar} />
+      ) : cargando && !productos ? (
+        <EsqueletoGrilla />
+      ) : (
+        <GrillaProductos productos={productos ?? []} />
+      )}
+    </PaginaCatalogo>
   );
 }

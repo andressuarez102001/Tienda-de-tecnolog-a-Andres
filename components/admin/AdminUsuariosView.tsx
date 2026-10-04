@@ -1,16 +1,18 @@
 'use client';
 
-import { useState } from 'react';
-import { userAdminService } from '@/application/admin/createAdminServices';
+import { useServicios } from '@/presentation/ServiciosProvider';
+import { useDatos } from '@/presentation/useDatos';
+import { UserStatus } from '@/domain/shared/enums';
 
-/**
- * Responsabilidad única: gestión de cuentas de usuario.
- */
+/** Cuentas de usuario y su estado de habilitación. */
 export default function AdminUsuariosView() {
-  const [initialState] = useState(() => userAdminService.loadInitialState());
-  const [usuarios, setUsuarios] = useState(initialState.usuarios);
+  const { usuarios: servicioUsuarios } = useServicios();
+  const { datos: usuarios, cargando, error, refrescar } = useDatos(() => servicioUsuarios.listar());
 
-  const cambiarEstadoUsuario = (id: number) => setUsuarios(userAdminService.toggleUserStatus(usuarios, id));
+  const alternar = async (id: number): Promise<void> => {
+    await servicioUsuarios.alternarEstado(id);
+    refrescar();
+  };
 
   return (
     <div className="space-y-6">
@@ -31,21 +33,35 @@ export default function AdminUsuariosView() {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5 text-sm">
-              {usuarios.map((u) => (
-                <tr key={u.id} className="hover:bg-white/[0.02] transition-colors">
-                  <td className="p-4 font-semibold text-white">{u.nombre}</td>
-                  <td className="p-4 text-gray-400 text-xs">{u.email}</td>
-                  <td className="p-4 font-medium text-blue-400 text-xs">{u.rol}</td>
+              {cargando && !usuarios ? (
+                <tr>
+                  <td colSpan={4} className="p-6 text-center text-gray-500 text-xs">
+                    Cargando usuarios…
+                  </td>
+                </tr>
+              ) : null}
+              {error ? (
+                <tr>
+                  <td colSpan={4} className="p-6 text-center text-red-400 text-xs">
+                    {error}
+                  </td>
+                </tr>
+              ) : null}
+              {(usuarios ?? []).map((usuario) => (
+                <tr key={usuario.id} className="hover:bg-white/[0.02] transition-colors">
+                  <td className="p-4 font-semibold text-white">{usuario.nombre}</td>
+                  <td className="p-4 text-gray-400 text-xs">{usuario.email.valor}</td>
+                  <td className="p-4 font-medium text-blue-400 text-xs">{usuario.rol}</td>
                   <td className="p-4">
                     <button
-                      onClick={() => cambiarEstadoUsuario(u.id)}
+                      onClick={() => void alternar(usuario.id)}
                       className={`px-3 py-1 rounded-full text-xs font-bold transition-all border ${
-                        u.estado === 'Activo'
+                        usuario.estado === UserStatus.Activo
                           ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                           : 'bg-red-500/10 text-red-400 border-red-500/20'
                       }`}
                     >
-                      {u.estado}
+                      {usuario.estado}
                     </button>
                   </td>
                 </tr>

@@ -1,26 +1,43 @@
-import type { StorefrontProduct } from '@/domain/store/entities';
+import type { Product } from '@/domain/catalog/Producto';
+import { Dinero } from '@/domain/shared/Dinero';
 import type { PriceFormatter } from './PriceFormatter';
 
 /**
- * Responsabilidad única: construir enlaces de contacto/compra por WhatsApp.
- * Separado de CatalogService para que la creación del mensaje de venta
- * no dependa ni contamine la lógica del catálogo.
+ * Construcción de enlaces de compra por WhatsApp.
+ *
+ * SRP: el mensaje de venta vive aquí y no en `CatalogoService`, así que
+ * consultar el catálogo no arrastra la lógica de redacción comercial.
+ *
+ * El total se calcula con `producto.cotizar(cantidad)`, que es donde vive
+ * la regla de envío: el mensaje nunca puede discrepar del total que cobra
+ * la tienda.
  */
 export class WhatsAppLinkBuilder {
-  constructor(private readonly formatter: PriceFormatter) {}
+  constructor(
+    private readonly formatter: PriceFormatter,
+    private readonly numeroWhatsApp: string,
+  ) {}
 
-  createPurchaseLink(product: StorefrontProduct, quantity: number, color: string, phone: string): string {
-    const total = this.formatter.format(product.calculateTotal(quantity));
-    const message = encodeURIComponent(
-      `Hola ShenzhenStock! Quisiera realizar la compra oficial de: ${product.name} (Acabado: ${color}, Cantidad: ${quantity} uds) por un valor de ${total}. ¿Tienen disponibilidad?`,
+  enlaceDeCompra(producto: Product, cantidad: number, acabado: string): string {
+    const total: Dinero = producto.cotizar(cantidad);
+    const mensaje = encodeURIComponent(
+      `Hola ShenzhenStock! Quisiera realizar la compra oficial de: ${producto.nombre} ` +
+        `(Acabado: ${acabado}, Cantidad: ${cantidad} uds) por un valor de ${this.formatter.format(total)}. ` +
+        `¿Tienen disponibilidad?`,
     );
-    return `https://wa.me/${phone}?text=${message}`;
+    return this.construir(mensaje);
   }
 
-  createCatalogInquiryLink(product: StorefrontProduct, phone: string): string {
-    const message = encodeURIComponent(
-      `Hola ShenzhenStock! Me interesa comprar el producto: ${product.name} por valor de ${this.formatter.format(product.price)}. ¿Tienen disponibilidad para envío inmediato?`,
+  enlaceDeConsulta(producto: Product): string {
+    const mensaje = encodeURIComponent(
+      `Hola ShenzhenStock! Me interesa comprar el producto: ${producto.nombre} ` +
+        `por valor de ${this.formatter.format(producto.precio)}. ` +
+        `¿Tienen disponibilidad para envío inmediato?`,
     );
-    return `https://wa.me/${phone}?text=${message}`;
+    return this.construir(mensaje);
+  }
+
+  private construir(mensajeCodificado: string): string {
+    return `https://wa.me/${this.numeroWhatsApp}?text=${mensajeCodificado}`;
   }
 }

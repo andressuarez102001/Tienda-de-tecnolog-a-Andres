@@ -1,14 +1,20 @@
+import { Dinero } from '@/domain/shared/Dinero';
+
 /**
- * Responsabilidad única: formatear precios para presentación (COP).
- * Vive en la capa de presentación porque usa Intl.NumberFormat, una API de UI.
+ * Formateo de precios en pesos colombianos (COP).
+ *
+ * Vive en presentación porque usa `Intl`, que es una API de interfaz, y
+ * recibe un `Dinero` (no un `number`) para que el formato no invite a
+ * pasar un valor que no pasó por la validación del value object.
+ *
+ * SRP: una sola responsabilidad.
  */
 export class PriceFormatter {
-  format(amount: number): string {
-    if (!Number.isFinite(amount) || amount < 0) throw new Error('El precio no es válido.');
+  format(monto: Dinero): string {
     return new Intl.NumberFormat('es-CO', {
       style: 'currency',
       currency: 'COP',
       maximumFractionDigits: 0,
-    }).format(amount);
+    }).format(monto.valor);
   }
 }

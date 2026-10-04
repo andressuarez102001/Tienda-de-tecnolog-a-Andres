@@ -9,9 +9,7 @@ interface CategoryItem {
 }
 
 const CATEGORIES: CategoryItem[] = [
-  { emoji: "🔌", name: "Cargadores", slug: "/cargadores" },
   { emoji: "🔋", name: "Power Banks", slug: "/productos-top" },
-  { emoji: "🔌", name: "Cables", slug: "/cargadores" },
   { emoji: "📱", name: "Fundas", slug: "/home-iphone" },
   { emoji: "🎧", name: "Audífonos", slug: "/productos-top" },
   { emoji: "🛡️", name: "Vidrios Templados", slug: "/home-iphone" },
@@ -32,15 +30,15 @@ const URL_WHATSAPP_IPHONE = `https://wa.me/${MI_TELEFONO}?text=${MENSAJE_IPHONE}
 export default function Home() {
   return (
     <main className="relative min-h-screen bg-[#08080a] text-white overflow-hidden selection:bg-blue-500 selection:text-white">
-      {/* 🌌 FONDO CON EFECTO AMBIENT GLOW */}
+     
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-gradient-to-tr from-blue-600/20 via-indigo-500/10 to-transparent blur-[140px] pointer-events-none rounded-full" />
       <div className="absolute top-[40%] right-0 w-[500px] h-[500px] bg-blue-500/10 blur-[160px] pointer-events-none rounded-full" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
         
-        {/* 🚀 HERO SECTION REDISEÑADA */}
+       
         <section className="flex flex-col items-center text-center pt-8 pb-16 max-w-4xl mx-auto">
-          {/* Badge Neón Minimalista */}
+          
           <div className="inline-flex items-center gap-2.5 bg-white/[0.03] backdrop-blur-xl border border-white/10 px-4 py-2 rounded-full text-xs font-medium text-blue-400 tracking-wider uppercase mb-8 shadow-2xl hover:border-blue-500/40 transition-all">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
@@ -49,17 +47,17 @@ export default function Home() {
             Tecnología Premium • Envíos Nacionales
           </div>
 
-          {/* Título Principal Tipografía Impacto */}
+          
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-gray-100 to-gray-500 mb-6 leading-[1.08]">
             El estándar superior para tus dispositivos.
           </h1>
 
-          {/* Subtítulo fluido */}
+          
           <p className="text-lg md:text-xl text-gray-400 font-normal mb-10 max-w-2xl leading-relaxed">
             Equipamiento de alta gama, cargadores, fundas exclusivas y accesorios seleccionados para maximizar tu experiencia.
           </p>
 
-          {/* Botones de Acción con Jerarquía Clara */}
+         
           <div className="flex gap-4 flex-wrap justify-center items-center">
             <Link
               href="/productos-top"
