@@ -51,6 +51,30 @@ CREATE TABLE IF NOT EXISTS pedidos (
   estado TEXT NOT NULL
 );
 
+-- Migración para bases creadas antes de normalizar la referencia del pedido.
+-- Conserva la instantánea JSON existente y deriva de ella el id del producto;
+-- se puede ejecutar repetidamente al iniciar sin alterar pedidos ya migrados.
+ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS producto_id TEXT;
+UPDATE pedidos
+   SET producto_id = COALESCE(producto->>'id', producto->'id'->>'valor')
+ WHERE producto_id IS NULL;
+ALTER TABLE pedidos ALTER COLUMN producto_id SET NOT NULL;
+
+DO $migracion$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+      FROM pg_constraint
+     WHERE conname = 'fk_pedidos_producto'
+       AND conrelid = 'pedidos'::regclass
+  ) THEN
+    ALTER TABLE pedidos
+      ADD CONSTRAINT fk_pedidos_producto
+      FOREIGN KEY (producto_id) REFERENCES productos (id) ON DELETE RESTRICT;
+  END IF;
+END;
+$migracion$;
+
 CREATE TABLE IF NOT EXISTS usuarios (
   id INTEGER PRIMARY KEY,
   nombre TEXT NOT NULL,
@@ -174,4 +198,98 @@ BEGIN
    WHERE p.id = p_producto_id;
 END;
 $proc$;
+
+-- --------------------------------------------------------------------------
+-- Lógica nativa del motor: reponer inventario.
+-- --------------------------------------------------------------------------
+
+-- Incrementa el stock de un producto. Es la operación complementaria del
+-- trigger: mientras la venta descuenta inventario en el motor, la reposición
+-- también vive aquí para que nadie modifique stock sin pasar por validación.
+CREATE OR REPLACE PROCEDURE reponer_stock(
+  p_producto_id TEXT,
+  p_cantidad INTEGER
+)
+LANGUAGE plpgsql
+AS $proc$
+BEGIN
+  IF p_cantidad <= 0 THEN
+    RAISE EXCEPTION 'La cantidad a reponer debe ser mayor que cero.';
+  END IF;
+
+  UPDATE productos
+     SET stock = stock + p_cantidad
+   WHERE id = p_producto_id;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'El producto "%" no existe.', p_producto_id;
+  END IF;
+END;
+$proc$;
+
+-- --------------------------------------------------------------------------
+-- Vistas de consulta.
+--
+-- Encapsulan las consultas de sustentación para que la presentación de datos
+-- normalizados viva dentro del motor y se reutilice. CREATE OR REPLACE VIEW
+-- las mantiene idempotentes.
+-- --------------------------------------------------------------------------
+
+-- Reconstruye cada pedido con su usuario, credencial, producto y categoría
+-- (INNER JOIN de 5 tablas).
+CREATE OR REPLACE VIEW v_pedidos_detalle AS
+SELECT p.id                        AS pedido,
+       p.cliente                   AS cliente,
+       c.email                     AS email_cuenta,
+       pr.nombre                   AS producto,
+       cat.nombre                  AS categoria,
+       p.cantidad                  AS unidades,
+       (pr.precio * p.cantidad)    AS total_linea,
+       p.estado                    AS estado
+FROM pedidos p
+INNER JOIN usuarios u      ON u.nombre = p.cliente
+INNER JOIN credenciales c  ON c.usuario_id = u.id
+INNER JOIN productos pr    ON pr.id = p.producto_id
+INNER JOIN categorias cat  ON cat.nombre = pr.categoria;
+
+-- Consolidado de ventas por categoría (GROUP BY + HAVING): solo categorías
+-- que han registrado al menos un pedido.
+CREATE OR REPLACE VIEW v_ventas_por_categoria AS
+SELECT pr.categoria                            AS categoria,
+       COUNT(p.id)                             AS pedidos,
+       COALESCE(SUM(p.cantidad), 0)            AS unidades_vendidas,
+       COALESCE(SUM(pr.precio * p.cantidad), 0) AS ingresos_cop
+FROM productos pr
+LEFT JOIN pedidos p ON p.producto_id = pr.id
+GROUP BY pr.categoria
+HAVING COUNT(p.id) >= 1;
+
+-- Inventario que requiere reposición: productos agotados (stock 0) o con
+-- stock bajo (<= 2). Traduce el estado del dominio (Agotado/Bajo) a SQL y
+-- ordena primero lo más urgente.
+CREATE OR REPLACE VIEW v_inventario_critico AS
+SELECT pr.id                     AS producto_id,
+       pr.nombre                 AS producto,
+       pr.categoria              AS categoria,
+       pr.stock                  AS stock_actual,
+       CASE
+         WHEN pr.stock = 0 THEN 'Agotado'
+         ELSE 'Bajo'
+       END                       AS estado_inventario
+FROM productos pr
+WHERE pr.stock <= 2
+ORDER BY pr.stock ASC, pr.nombre;
+
+-- Ventas consolidadas por cliente (GROUP BY sobre el campo transaccional):
+-- cuántos pedidos hizo cada cliente, cuántas unidades sumó y cuánto dinero
+-- dejó en la tienda.
+CREATE OR REPLACE VIEW v_ventas_por_cliente AS
+SELECT p.cliente                          AS cliente,
+       COUNT(p.id)                        AS pedidos,
+       COALESCE(SUM(p.cantidad), 0)       AS unidades,
+       COALESCE(SUM(pr.precio * p.cantidad), 0) AS ingresos_cop
+FROM pedidos p
+INNER JOIN productos pr ON pr.id = p.producto_id
+GROUP BY p.cliente
+ORDER BY ingresos_cop DESC;
 `;

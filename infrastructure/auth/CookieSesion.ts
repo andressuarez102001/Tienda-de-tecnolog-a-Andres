@@ -7,8 +7,6 @@
  */
 export const COOKIE_SESION = 'shz_sesion';
 
-const unDia = 24 * 60 * 60;
-
 export function esProduccion(): boolean {
   return process.env.NODE_ENV === 'production';
 }
@@ -25,6 +23,6 @@ export function opcionCookieSesion(expiraEnMilisegundos: number): {
     sameSite: 'lax',
     path: '/',
     secure: esProduccion(),
-    maxAge: Math.floor(expiraEnMilisegundos / 1000 / unDia) + 1,
+    maxAge: Math.ceil(expiraEnMilisegundos / 1000),
   };
 }

@@ -17,6 +17,7 @@ import { ProductoFabric, type ProductPersisted } from '@/domain/catalog/Producto
 import { ProductoFisico } from '@/domain/catalog/ProductoFisico';
 import { ProductoDigital } from '@/domain/catalog/ProductoDigital';
 import { leerDuracionDeToken } from '@/infrastructure/auth/DuracionToken';
+import { opcionCookieSesion } from '@/infrastructure/auth/CookieSesion';
 
 /**
  * Pruebas de la capa de servidor: persistencia en archivo, hashing y tokens.
@@ -112,6 +113,14 @@ describe('duración del token (JWT_EXPIRES_IN)', () => {
   it('cae en el valor por defecto con una entrada inválida', () => {
     expect(leerDuracionDeToken('no-es-una-duracion')).toBe(604_800_000);
     expect(leerDuracionDeToken(undefined)).toBe(604_800_000);
+  });
+});
+
+describe('cookie de sesión', () => {
+  // Regresión: `maxAge` estaba calculado en días, pero `Set-Cookie` lo
+  // interpreta en segundos; una sesión de 7 días caducaba a los 8 segundos.
+  it('expresa maxAge en segundos', () => {
+    expect(opcionCookieSesion(leerDuracionDeToken('7d')).maxAge).toBe(604_800);
   });
 });
 

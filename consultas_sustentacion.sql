@@ -69,7 +69,22 @@ ORDER BY ingresos_cop DESC;
 
 
 -- ----------------------------------------------------------------------------
--- 4. Ejemplos para presentar la lógica nativa del motor (OPCIONALES).
+-- 4. Vistas (views): las consultas anteriores quedaron materializadas como
+--    objetos del esquema (infrastructure/pg/Esquema.ts). Se consultan igual que
+--    una tabla:
+-- ----------------------------------------------------------------------------
+SELECT * FROM v_pedidos_detalle ORDER BY pedido;
+SELECT * FROM v_ventas_por_categoria ORDER BY ingresos_cop DESC;
+
+-- Vistas adicionales del esquema:
+--   v_inventario_critico    -> productos agotados o con stock bajo (<= 2).
+--   v_ventas_por_cliente    -> ventas consolidadas por cliente.
+SELECT * FROM v_inventario_critico ORDER BY stock_actual ASC;
+SELECT * FROM v_ventas_por_cliente ORDER BY ingresos_cop DESC;
+
+
+-- ----------------------------------------------------------------------------
+-- 5. Ejemplos para presentar la lógica nativa del motor (OPCIONALES).
 --    Descomenta una línea en pgAdmin4 y ejecútala solo cuando quieras
 --    demostrar cómo el procedimiento valida inventario y el trigger descuenta
 --    el stock automáticamente.
@@ -83,3 +98,9 @@ ORDER BY ingresos_cop DESC;
 --
 -- Consulta para comprobar que el trigger descontó el stock (esperado: 16):
 --   SELECT id, nombre, stock FROM productos WHERE id = 'airpods';
+--
+-- Reponer inventario con el segundo procedimiento almacenado (airpods 16 -> 21):
+--   CALL reponer_stock('airpods', 5);
+--
+-- Caso controlado de error de reponer_stock (cantidad inválida):
+--   CALL reponer_stock('airpods', -5);

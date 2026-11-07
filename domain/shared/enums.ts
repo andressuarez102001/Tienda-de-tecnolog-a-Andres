@@ -60,6 +60,7 @@ export enum ProductCollection {
   Ipad = 'iPad',
   Drone = 'Drone',
   Juguetes = 'Juguetes',
+  Tecnologia = 'Tecnología',
 }
 
 /** Listado editorial del catálogo. */
