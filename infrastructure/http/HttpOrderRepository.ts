@@ -24,7 +24,7 @@ export class HttpOrderRepository implements OrderRepository {
   async actualizar(id: number, pedido: Pedido): Promise<Pedido> {
     await clienteApi.actualizar(
       `/api/admin/pedidos/${segmento(String(id))}/estado`,
-      { estado: pedido.estado },
+      { estado: pedido.nombreEstado },
     );
     return pedido;
   }

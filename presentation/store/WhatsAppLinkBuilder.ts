@@ -8,9 +8,9 @@ import type { PriceFormatter } from './PriceFormatter';
  * SRP: el mensaje de venta vive aquí y no en `CatalogoService`, así que
  * consultar el catálogo no arrastra la lógica de redacción comercial.
  *
- * El total se calcula con `producto.cotizar(cantidad)`, que es donde vive
- * la regla de envío: el mensaje nunca puede discrepar del total que cobra
- * la tienda.
+ * El total se calcula con `producto.cotizarConTarifa(cantidad, tarifa)`,
+ * que es donde vive la regla de envío: el mensaje nunca puede discrepar del
+ * total que muestra la tienda.
  */
 export class WhatsAppLinkBuilder {
   constructor(
@@ -18,8 +18,16 @@ export class WhatsAppLinkBuilder {
     private readonly numeroWhatsApp: string,
   ) {}
 
-  enlaceDeCompra(producto: Product, cantidad: number, acabado: string): string {
-    const total: Dinero = producto.cotizar(cantidad);
+  enlaceDeCompra(
+    producto: Product,
+    cantidad: number,
+    acabado: string,
+    tarifaPorKilo?: number,
+  ): string {
+    const total: Dinero =
+      tarifaPorKilo === undefined
+        ? producto.cotizar(cantidad)
+        : producto.cotizarConTarifa(cantidad, tarifaPorKilo);
     const mensaje = encodeURIComponent(
       `Hola ShenzhenStock! Quisiera realizar la compra oficial de: ${producto.nombre} ` +
         `(Acabado: ${acabado}, Cantidad: ${cantidad} uds) por un valor de ${this.formatter.format(total)}. ` +

@@ -1,7 +1,7 @@
 import { Dinero } from '@/domain/shared/Dinero';
 import { ProductId } from '@/domain/shared/ProductId';
 import { CatalogListing, ProductCollection, ProductSort, StockLevel, TipoProducto } from '@/domain/shared/enums';
-import { UMBRAL_STOCK_CRITICO } from '@/domain/shared/constantes';
+import { COSTO_ENVIO_POR_KILO, UMBRAL_STOCK_CRITICO } from '@/domain/shared/constantes';
 import type { ProductDraft } from './ProductoDraft';
 
 /** Forma primitiva de un producto, usada para serializar y para reconstruir. */
@@ -157,7 +157,24 @@ export abstract class Product {
    * subclases, pero el costo de envío se resuelve por polimorfismo.
    */
   cotizar(cantidad: number): Dinero {
-    return this.totalPedido(cantidad).sumar(this.costoEnvio());
+    return this.cotizarConTarifa(cantidad, COSTO_ENVIO_POR_KILO);
+  }
+
+  /**
+   * Variante que recibe la tarifa vigente por kilogramo.
+   *
+   * La tarifa vive en la configuración de la tienda y puede cambiar desde el
+   * panel; por eso no se lee de una constante dentro de la subclase. Las
+   * subclases que no cobran envío (digitales) heredan esta implementación.
+   */
+  cotizarConTarifa(cantidad: number, tarifaPorKilo: number): Dinero {
+    return this.totalPedido(cantidad).sumar(this.costoEnvioConTarifa(tarifaPorKilo));
+  }
+
+  /** Costo de envío con una tarifa explícita; por defecto, el valor del contrato. */
+  costoEnvioConTarifa(_tarifaPorKilo: number): Dinero {
+    void _tarifaPorKilo;
+    return this.costoEnvio();
   }
 
   /** Valor total del producto almacenado: precio x stock. */

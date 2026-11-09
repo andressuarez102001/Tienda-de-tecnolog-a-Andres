@@ -33,7 +33,7 @@ export default function Navbar() {
           Shenzhen<span className="text-blue-500 font-medium">Stock</span>
         </Link>
 
-        <div className="flex items-center gap-6 sm:gap-8">
+        <div className="flex items-center gap-3 overflow-x-auto whitespace-nowrap sm:gap-8">
           <Link
             href="/"
             className="text-xs font-normal text-white/80 hover:text-white transition-colors"
@@ -50,7 +50,19 @@ export default function Navbar() {
             href="/productos-nuevos"
             className="text-xs font-normal text-white/80 hover:text-white transition-colors"
           >
+            Productos nuevos
+          </Link>
+          <Link
+            href="/novedades"
+            className="text-xs font-normal text-white/80 hover:text-white transition-colors"
+          >
             Novedades
+          </Link>
+          <Link
+            href="/simulador"
+            className="text-[11px] font-semibold text-blue-300 bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 hover:text-blue-200 px-3 py-1 rounded-full transition-all"
+          >
+            Simulador B2B
           </Link>
 
           {esAdmin ? (

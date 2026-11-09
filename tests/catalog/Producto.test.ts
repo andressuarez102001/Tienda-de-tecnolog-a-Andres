@@ -122,6 +122,24 @@ describe('ProductoFisico (polimorfismo de envío)', () => {
   it('el precio con envío usa el envío de la subclase', () => {
     expect(fisico({ pesoGramos: 1000 }).cotizar(2).valor).toBe(50000 + COSTO_ENVIO_POR_KILO);
   });
+
+  it('respeta la tarifa por kilogramo que configura la tienda', () => {
+    const producto = fisico({ pesoGramos: 1000 });
+
+    expect(producto.cotizarConTarifa(2, 10000).valor).toBe(50000 + 10000);
+    expect(digital().cotizarConTarifa(2, 10000).valor).toBe(50000);
+  });
+
+  it('actualiza el peso desde el borrador y lo devuelve al editar', () => {
+    const actualizado = fisico({ pesoGramos: 500 }).actualizar({
+      ...fisico().borrador(),
+      pesoGramos: 2000,
+    });
+
+    expect(actualizado).toBeInstanceOf(ProductoFisico);
+    expect((actualizado as ProductoFisico).peso).toBe(2000);
+    expect(actualizado.borrador().pesoGramos).toBe(2000);
+  });
 });
 
 describe('ProductoDigital (polimorfismo de envío)', () => {

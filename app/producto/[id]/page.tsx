@@ -4,7 +4,8 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { StockLevel } from '@/domain/shared/enums';
+import { ProductCollection, StockLevel } from '@/domain/shared/enums';
+import { COSTO_ENVIO_POR_KILO } from '@/domain/shared/constantes';
 import { useServicios } from '@/presentation/ServiciosProvider';
 import { useDatos } from '@/presentation/useDatos';
 import { EstadoCarga } from '@/presentation/catalog/Estados';
@@ -55,7 +56,7 @@ const ESTADO_STOCK: Record<StockLevel, string> = {
 
 export default function ProductDetailPage() {
   const params = useParams<{ id: string }>();
-  const { catalogo, priceFormatter, whatsapp } = useServicios();
+  const { catalogo, configuracion, priceFormatter, whatsapp } = useServicios();
 
   const [imagenActiva, setImagenActiva] = useState(0);
   const [acabadoSeleccionado, setAcabadoSeleccionado] = useState(0);
@@ -65,6 +66,7 @@ export default function ProductDetailPage() {
     () => catalogo.obtenerPorId(params.id),
     [params.id],
   );
+  const { datos: config } = useDatos(() => configuracion.obtener(), []);
 
   if (cargando && !producto) {
     return <EstadoCarga mensaje="Cargando producto…" />;
@@ -98,9 +100,14 @@ export default function ProductDetailPage() {
     );
   }
 
-  const acabado = ACABADOS[acabadoSeleccionado];
+  const esIphone = producto.coleccion === ProductCollection.Iphone;
+  const acabado = esIphone ? ACABADOS[acabadoSeleccionado] : { nombre: 'Estándar' };
   const imagenes = GALERIA[producto.id.valor] ?? [producto.imagen];
-  const total = producto.cotizar(cantidad);
+  const agotado = producto.esAgotado();
+  const tarifaPorKilo = config?.costoEnvio.valor ?? COSTO_ENVIO_POR_KILO;
+  const total = agotado
+    ? producto.precio
+    : producto.cotizarConTarifa(cantidad, tarifaPorKilo);
   const nivelStock = producto.nivelStock();
 
   return (
@@ -173,7 +180,7 @@ export default function ProductDetailPage() {
               <div className="bg-black/40 border border-white/5 p-4 rounded-2xl">
                 <span className="text-gray-500 block font-medium mb-1">Costo de envío</span>
                 <span className="text-gray-200 font-bold">
-                  {priceFormatter.format(producto.costoEnvio())}
+                  {priceFormatter.format(producto.costoEnvioConTarifa(tarifaPorKilo))}
                 </span>
               </div>
               <div className="bg-black/40 border border-white/5 p-4 rounded-2xl">
@@ -190,12 +197,18 @@ export default function ProductDetailPage() {
               className={`inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest mb-3 px-3 py-1 rounded-full border ${
                 nivelStock === StockLevel.Disponible
                   ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
-                  : 'text-amber-400 bg-amber-500/10 border-amber-500/20'
+                  : nivelStock === StockLevel.Bajo
+                    ? 'text-amber-400 bg-amber-500/10 border-amber-500/20'
+                    : 'text-red-400 bg-red-500/10 border-red-500/20'
               }`}
             >
               <span
                 className={`w-1.5 h-1.5 rounded-full animate-pulse ${
-                  nivelStock === StockLevel.Disponible ? 'bg-emerald-400' : 'bg-amber-400'
+                  nivelStock === StockLevel.Disponible
+                    ? 'bg-emerald-400'
+                    : nivelStock === StockLevel.Bajo
+                      ? 'bg-amber-400'
+                      : 'bg-red-400'
                 }`}
               />
               {ESTADO_STOCK[nivelStock]} • {producto.stock} Unidades
@@ -209,33 +222,35 @@ export default function ProductDetailPage() {
             </p>
           </div>
 
-          <div className="space-y-3 border-t border-b border-white/10 py-6">
-            <label className="text-xs font-bold uppercase tracking-wider text-gray-400 block">
-              Acabado: <span className="text-white font-semibold">{acabado.nombre}</span>
-            </label>
-            <div className="flex items-center gap-3">
-              {ACABADOS.map((opcion, indice) => (
-                <button
-                  key={opcion.nombre}
-                  onClick={() => setAcabadoSeleccionado(indice)}
-                  className={`w-9 h-9 rounded-full transition-all flex items-center justify-center p-0.5 ${
-                    acabadoSeleccionado === indice ? 'ring-2 ring-[#0071E3] scale-110' : 'opacity-70 hover:opacity-100'
-                  }`}
-                  style={{ backgroundColor: opcion.hex }}
-                  title={opcion.nombre}
-                >
-                  {acabadoSeleccionado === indice ? (
-                    <span className="w-2 h-2 rounded-full bg-white shadow-md" />
-                  ) : null}
-                </button>
-              ))}
+          {esIphone ? (
+            <div className="space-y-3 border-t border-b border-white/10 py-6">
+              <label className="text-xs font-bold uppercase tracking-wider text-gray-400 block">
+                Acabado: <span className="text-white font-semibold">{acabado.nombre}</span>
+              </label>
+              <div className="flex items-center gap-3">
+                {ACABADOS.map((opcion, indice) => (
+                  <button
+                    key={opcion.nombre}
+                    onClick={() => setAcabadoSeleccionado(indice)}
+                    className={`w-9 h-9 rounded-full transition-all flex items-center justify-center p-0.5 ${
+                      acabadoSeleccionado === indice ? 'ring-2 ring-[#0071E3] scale-110' : 'opacity-70 hover:opacity-100'
+                    }`}
+                    style={{ backgroundColor: opcion.hex }}
+                    title={opcion.nombre}
+                  >
+                    {acabadoSeleccionado === indice ? (
+                      <span className="w-2 h-2 rounded-full bg-white shadow-md" />
+                    ) : null}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          ) : null}
 
           <div className="bg-white/[0.02] border border-white/10 p-6 sm:p-8 rounded-3xl space-y-6 backdrop-blur-xl shadow-2xl">
             <div className="flex items-baseline justify-between border-b border-white/5 pb-4">
               <span className="text-xs font-bold uppercase text-gray-400 tracking-wider">
-                Precio Total
+                {agotado ? 'Precio de referencia' : 'Precio Total'}
               </span>
               <div className="text-right">
                 <span className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
@@ -252,15 +267,17 @@ export default function ProductDetailPage() {
               <div className="flex items-center bg-black/60 border border-white/10 rounded-2xl p-1">
                 <button
                   onClick={() => setCantidad(Math.max(1, cantidad - 1))}
-                  disabled={cantidad <= 1}
+                  disabled={agotado || cantidad <= 1}
                   className="w-9 h-9 flex items-center justify-center text-white text-lg rounded-xl hover:bg-white/10 transition-colors font-bold disabled:opacity-30"
                 >
                   -
                 </button>
-                <span className="text-white font-bold w-10 text-center text-sm">{cantidad}</span>
+                <span className="text-white font-bold w-10 text-center text-sm">
+                  {agotado ? 0 : cantidad}
+                </span>
                 <button
                   onClick={() => setCantidad(Math.min(producto.stock, cantidad + 1))}
-                  disabled={producto.esAgotado()}
+                  disabled={agotado || cantidad >= producto.stock}
                   className="w-9 h-9 flex items-center justify-center text-white text-lg rounded-xl hover:bg-white/10 transition-colors font-bold disabled:opacity-30"
                 >
                   +
@@ -269,14 +286,25 @@ export default function ProductDetailPage() {
             </div>
 
             <div className="space-y-3 pt-2">
-              <a
-                href={whatsapp.enlaceDeCompra(producto, cantidad, acabado.nombre)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full bg-gradient-to-r from-[#0071E3] to-[#005bb5] hover:from-[#0077ed] hover:to-[#0066cc] text-white font-bold py-4 px-6 rounded-full transition-all duration-300 shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 text-sm hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <span>Pedir por WhatsApp - {priceFormatter.format(total)}</span>
-              </a>
+              {agotado ? (
+                <span className="w-full bg-white/5 text-gray-400 border border-white/10 font-bold py-4 px-6 rounded-full flex items-center justify-center gap-2 text-sm cursor-not-allowed">
+                  Producto agotado temporalmente
+                </span>
+              ) : (
+                <a
+                  href={whatsapp.enlaceDeCompra(
+                    producto,
+                    cantidad,
+                    acabado.nombre,
+                    tarifaPorKilo,
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-gradient-to-r from-[#0071E3] to-[#005bb5] hover:from-[#0077ed] hover:to-[#0066cc] text-white font-bold py-4 px-6 rounded-full transition-all duration-300 shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 text-sm hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <span>Pedir por WhatsApp - {priceFormatter.format(total)}</span>
+                </a>
+              )}
               <a
                 href={whatsapp.enlaceDeConsulta(producto)}
                 target="_blank"
@@ -293,24 +321,26 @@ export default function ProductDetailPage() {
             </div>
           </div>
 
-          <div className="space-y-4 pt-2">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-white">
-              Guía de Instalación Rápida
-            </h3>
-            <div className="space-y-2.5">
-              {PASOS_INSTALACION.map((paso, index) => (
-                <div
-                  key={paso}
-                  className="flex items-start gap-3 text-xs text-gray-400 bg-white/[0.02] border border-white/5 p-3.5 rounded-2xl"
-                >
-                  <span className="w-5 h-5 rounded-full bg-[#0071E3]/20 text-[#2997FF] font-bold text-[10px] flex items-center justify-center flex-shrink-0">
-                    {index + 1}
-                  </span>
-                  <span className="leading-relaxed">{paso}</span>
-                </div>
-              ))}
+          {esIphone ? (
+            <div className="space-y-4 pt-2">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-white">
+                Guía de Instalación Rápida
+              </h3>
+              <div className="space-y-2.5">
+                {PASOS_INSTALACION.map((paso, index) => (
+                  <div
+                    key={paso}
+                    className="flex items-start gap-3 text-xs text-gray-400 bg-white/[0.02] border border-white/5 p-3.5 rounded-2xl"
+                  >
+                    <span className="w-5 h-5 rounded-full bg-[#0071E3]/20 text-[#2997FF] font-bold text-[10px] flex items-center justify-center flex-shrink-0">
+                      {index + 1}
+                    </span>
+                    <span className="leading-relaxed">{paso}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          ) : null}
         </div>
       </main>
     </div>

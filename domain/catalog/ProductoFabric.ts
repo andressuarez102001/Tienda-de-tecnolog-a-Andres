@@ -46,7 +46,7 @@ export interface ProductPersisted {
  */
 /**
  * Un `ProductId` serializado a JSON queda como `{ "id": "..." }`, y un `Dinero`
- * como `{ "monto": 18000 }`: al releerlos no son nadahind instances, solo
+ * como `{ "monto": 18000 }`: al releerlos no son instancias, solo
  * objetos planos. Estos lectores aceptan tanto esas formas heredadas como los
  * primitivos planos que escribe `aPersisted`, para que un archivo creado por
  * una versión anterior siga siendo legible.
@@ -87,7 +87,10 @@ export const ProductoFabric = {
     };
     return borrador.tipo === TipoProducto.Digital
       ? new ProductoDigital(base)
-      : new ProductoFisico({ ...base, pesoGramos: PESO_GRAMOS_POR_DEFECTO });
+      : new ProductoFisico({
+          ...base,
+          pesoGramos: borrador.pesoGramos ?? PESO_GRAMOS_POR_DEFECTO,
+        });
   },
 
   /**

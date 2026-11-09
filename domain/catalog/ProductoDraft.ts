@@ -15,6 +15,8 @@ export interface ProductDraft {
   readonly precio: number;
   readonly stock: number;
   readonly imagen: string;
+  /** Peso en gramos; solo aplica a los productos físicos. */
+  readonly pesoGramos?: number;
   readonly tipo: TipoProducto;
   readonly coleccion: ProductCollection;
   readonly destacado: boolean;

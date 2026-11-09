@@ -43,9 +43,11 @@ function FormularioLogin() {
 
       if (!respuesta.ok) {
         const cuerpo = (await respuesta.json().catch(() => undefined)) as
-          | { error?: string }
+          | { error?: string; detalle?: string }
           | undefined;
-        setError(cuerpo?.error ?? 'Credenciales incorrectas o cuenta sin permisos.');
+        setError(
+          cuerpo?.detalle ?? cuerpo?.error ?? 'Credenciales incorrectas o cuenta sin permisos.',
+        );
         return;
       }
 
@@ -67,7 +69,7 @@ function FormularioLogin() {
     <div className="min-h-[80vh] flex items-center justify-center px-4">
       <div className="bg-gray-900 border border-gray-800 p-8 rounded-2xl w-full max-w-md shadow-2xl">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">TecnoStore Admin</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">ShenzhenStock Admin</h1>
           <p className="text-gray-400 text-sm">
             Ingresa tus credenciales para gestionar la tienda
           </p>

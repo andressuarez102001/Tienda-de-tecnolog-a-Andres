@@ -128,12 +128,17 @@ export function borradorProducto(cuerpo: unknown): ProductDraft {
     precio: numero(datos, 'precio', { minimo: 0 }),
     stock: entero(datos, 'stock', { minimo: 0 }),
     imagen: texto(datos, 'imagen'),
+    pesoGramos:
+      datos.pesoGramos === undefined
+        ? undefined
+        : numero(datos, 'pesoGramos', { minimo: 1 }),
     tipo: opcion(datos, 'tipo', [TipoProducto.Fisico, TipoProducto.Digital]),
     coleccion: opcion(datos, 'coleccion', [
       ProductCollection.Iphone,
       ProductCollection.Ipad,
       ProductCollection.Drone,
       ProductCollection.Juguetes,
+      ProductCollection.Tecnologia,
     ]),
     destacado: bandera(datos, 'destacado'),
     novedad: bandera(datos, 'novedad'),

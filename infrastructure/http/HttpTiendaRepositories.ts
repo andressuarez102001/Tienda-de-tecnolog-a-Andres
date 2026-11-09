@@ -44,7 +44,7 @@ export class HttpReportRepository implements ReportRepository {
 /** Configuración de la tienda por HTTP. */
 export class HttpStoreSettingsRepository implements StoreSettingsRepository {
   async obtener(): Promise<ConfiguracionTienda> {
-    const cuerpo = await clienteApi.obtener<{ configuracion: unknown }>('/api/admin/configuracion');
+    const cuerpo = await clienteApi.obtener<{ configuracion: unknown }>('/api/configuracion');
     return configuracionDesdeJson(cuerpo.configuracion);
   }
 

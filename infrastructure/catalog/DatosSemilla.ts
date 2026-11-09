@@ -1,3 +1,4 @@
+import type { Product } from '@/domain/catalog/Producto';
 import { Pedido } from '@/domain/orders/Pedido';
 import { Usuario } from '@/domain/users/Usuario';
 import { Categoria } from '@/domain/tienda/Categoria';
@@ -105,6 +106,25 @@ export const CONFIGURACION_SEMILLA = {
   costoEnvio: 12000,
   emailContacto: 'contacto@shenzhenstock.co',
 } as const;
+
+/**
+ * Catálogo que queda después de las ventas de demostración.
+ *
+ * PostgreSQL descuenta el stock con el trigger `trg_descontar_stock_en_pedido`
+ * al insertar los pedidos de la semilla. El almacén JSON no tiene trigger, así
+ * que sin este cálculo los dos almacenes arrancarían con inventarios distintos
+ * (y `drone-1` seguiría apareciendo en el catálogo público solo en JSON).
+ */
+export function catalogoTrasVentasSemilla(): ReadonlyArray<Product> {
+  const porId = new Map(CATALOGO_SEMILLA.map((producto) => [producto.id.valor, producto]));
+  for (const pedido of PEDIDOS_SEMILLA) {
+    const actual = porId.get(pedido.productoId);
+    if (actual) {
+      porId.set(pedido.productoId, actual.descontarStock(pedido.cantidad));
+    }
+  }
+  return CATALOGO_SEMILLA.map((producto) => porId.get(producto.id.valor) ?? producto);
+}
 
 export function crearPedidosSemilla(): Pedido[] {
   return PEDIDOS_SEMILLA.map((semilla) =>

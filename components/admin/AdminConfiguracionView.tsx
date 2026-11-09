@@ -85,7 +85,7 @@ export default function AdminConfiguracionView() {
 
         <label className="block">
           <span className="block text-xs font-bold uppercase text-gray-400 mb-2">
-            Costo de Envío Nacional (COP)
+            Tarifa de Envío por Kilogramo (COP)
           </span>
           <input
             name="costoEnvio"
@@ -94,6 +94,10 @@ export default function AdminConfiguracionView() {
             defaultValue={config.costoEnvio.valor}
             className={campo}
           />
+          <span className="block text-[11px] text-gray-500 mt-1">
+            Se aplica al peso de cada producto físico en la ficha y en el mensaje de
+            WhatsApp.
+          </span>
         </label>
 
         <label className="block">

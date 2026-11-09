@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 
 type Contexto = { params: Promise<{ id: string }> };
 
-/** `PUT /api/admin/productos/[id]` �?" actualización completa. */
+/** `PUT /api/admin/productos/[id]`: actualización completa. */
 export async function PUT(peticion: Request, contexto: Contexto): Promise<NextResponse> {
   const sinPermiso = await exigirAdmin();
   if (sinPermiso) {

@@ -4,7 +4,7 @@
 * Antes cada concepto era un `string` suelto o una unión de literales
  * (`'Admin' | 'Cliente'`, `estado: string`). Eso:
  *
- *   1. Noxia el autocompletado y el chequeo de tipos en la vista.
+ *   1. Anulaba el autocompletado y el chequeo de tipos en la vista.
  *   2. Imposibilita llamar `Object.values(...)` para generar formularios.
  *   3. Obliga a usar casts `as` al leer valores del DOM (AdminPedidosView).
  *

@@ -304,7 +304,7 @@ describe('HttpOrderRepository', () => {
     const escritura = peticiones[0];
     expect(escritura.url).toBe('/api/admin/pedidos/1/estado');
     expect(escritura.method).toBe('PATCH');
-    expect(escritura.body).toContain('Enviado');
+    expect(JSON.parse(escritura.body ?? '{}')).toEqual({ estado: 'Enviado' });
   });
 });
 

@@ -58,7 +58,7 @@ export class Usuario {
   }
 
   /**
-   * Rehidratación: reconstruye la entidad desde datos que venue del
+   * Rehidratación: reconstruye la entidad desde datos que vienen del
    * almacenamiento. Existe porque la sesión se guarda como JSON en el
    * navegador, y un `string` suelto no vuelve a ser un `Email` válido por
    * sí solo.

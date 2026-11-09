@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react';
 import type { Product } from '@/domain/catalog/Producto';
 import type { ProductDraft } from '@/domain/catalog/ProductoDraft';
 import { ProductCollection, StockLevel, TipoProducto } from '@/domain/shared/enums';
+import { PESO_GRAMOS_POR_DEFECTO } from '@/domain/shared/constantes';
 import { Dinero } from '@/domain/shared/Dinero';
 import { useServicios } from '@/presentation/ServiciosProvider';
 import { useDatos } from '@/presentation/useDatos';
@@ -22,29 +23,13 @@ const BORRADOR_VACIO: ProductDraft = {
   precio: 0,
   stock: 0,
   imagen: '/globe.svg',
+  pesoGramos: PESO_GRAMOS_POR_DEFECTO,
   tipo: TipoProducto.Fisico,
   coleccion: ProductCollection.Iphone,
   destacado: false,
   novedad: false,
   tendencia: false,
 };
-
-/** Extrae el borrador de un producto existente para precargar el formulario. */
-function borradorDe(producto: Product): ProductDraft {
-  return {
-    nombre: producto.nombre,
-    descripcion: producto.descripcion,
-    categoria: producto.categoria,
-    precio: producto.precio.valor,
-    stock: producto.stock,
-    imagen: producto.imagen,
-    tipo: producto.tipo,
-    coleccion: producto.coleccion,
-    destacado: producto.destacado,
-    novedad: producto.novedad,
-    tendencia: producto.tendencia,
-  };
-}
 
 /**
  * Inventario de productos: listado, búsqueda, filtros y CRUD.
@@ -117,7 +102,7 @@ export default function AdminProductosView() {
 
   const iniciarEdicion = (producto: Product): void => {
     setProductoEditando(producto.id.valor);
-    setBorrador(borradorDe(producto));
+    setBorrador(producto.borrador());
     setFormularioAbierto(true);
     setError('');
   };
@@ -283,6 +268,24 @@ export default function AdminProductosView() {
                   </option>
                 ))}
               </select>
+            </label>
+
+            <label className="space-y-1">
+              <span className="text-xs font-bold uppercase text-gray-400">
+                Peso (gramos)
+              </span>
+              <input
+                type="number"
+                min={1}
+                step={1}
+                disabled={borrador.tipo !== TipoProducto.Fisico}
+                className="w-full border border-white/10 bg-black/50 p-3 rounded-xl outline-none focus:border-blue-500 text-white text-sm disabled:opacity-40"
+                value={borrador.pesoGramos ?? PESO_GRAMOS_POR_DEFECTO}
+                onChange={(evento) => alternar('pesoGramos', Number(evento.target.value))}
+              />
+              <span className="block text-[11px] text-gray-500">
+                Solo aplica a productos físicos; define el envío.
+              </span>
             </label>
 
             <label className="space-y-1">

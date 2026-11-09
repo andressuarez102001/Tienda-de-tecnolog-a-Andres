@@ -7,7 +7,7 @@
  *    común, en lugar de repetir el `try/catch` en cada vista.
  *  - Añadir la cookie de sesión sin que el código de la vista sepa que existe:
  *    va sola porque es `httpOnly` y de mismo origen, así que no hay que
- *    manipulations de `credentials` ni manejo del token.
+ *    manipulaciones de `credentials` ni manejo del token.
  *
  * La cookie es `httpOnly` a propósito: el JavaScript no puede leerla, y por
  * eso tampoco puede reenviarla a mano. `same-origin` solo hace falta para

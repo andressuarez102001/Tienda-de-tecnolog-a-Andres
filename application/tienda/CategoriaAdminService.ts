@@ -22,6 +22,10 @@ export class CategoriaAdminService {
     if (!limpia) {
       throw new Error('La categoría debe tener nombre.');
     }
+    const existentes = await this.categorias.listar();
+    if (existentes.some((categoria) => categoria.nombre.toLowerCase() === limpia.toLowerCase())) {
+      throw new Error(`Ya existe una categoría con el nombre "${limpia}".`);
+    }
     return this.categorias.crear(limpia);
   }
 

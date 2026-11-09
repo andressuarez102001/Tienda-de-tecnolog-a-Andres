@@ -6,7 +6,7 @@ import { errorDeDominio, exigirAdmin } from '../../_comun/respuestas';
 
 export const dynamic = 'force-dynamic';
 
-/** `GET /api/admin/productos` �?" listado completo, incluidos los agotados. */
+/** `GET /api/admin/productos`: listado completo, incluidos los agotados. */
 export async function GET(): Promise<NextResponse> {
   const sinPermiso = await exigirAdmin();
   if (sinPermiso) {
@@ -20,7 +20,7 @@ export async function GET(): Promise<NextResponse> {
   }
 }
 
-/** `POST /api/admin/productos` �?" crea un producto. */
+/** `POST /api/admin/productos`: crea un producto. */
 export async function POST(peticion: Request): Promise<NextResponse> {
   const sinPermiso = await exigirAdmin();
   if (sinPermiso) {

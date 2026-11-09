@@ -1,6 +1,6 @@
 import path from 'node:path';
-import { CATALOGO_SEMILLA } from '@/infrastructure/catalog/CatalogoSemilla';
 import {
+  catalogoTrasVentasSemilla,
   crearCategoriasSemilla,
   crearConfiguracionSemilla,
   crearPedidosSemilla,
@@ -91,7 +91,7 @@ export function crearSemillaServidor(generarHash: VerificadorDeClaves): Generado
 
     return {
       version: VERSION_ACTUAL,
-      productos: CATALOGO_SEMILLA.map((producto) => ProductoFabric.aPersisted(producto)),
+      productos: catalogoTrasVentasSemilla().map((producto) => ProductoFabric.aPersisted(producto)),
       pedidos: crearPedidosSemilla().map((pedido) => pedido.aPersistido()),
       usuarios: crearUsuariosSemilla().map((usuario) => usuario.aPersistido()),
       credenciales,

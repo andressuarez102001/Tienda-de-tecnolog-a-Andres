@@ -9,10 +9,10 @@ interface CategoryItem {
 }
 
 const CATEGORIES: CategoryItem[] = [
-  { emoji: "🔋", name: "Power Banks", slug: "/productos-top" },
-  { emoji: "📱", name: "Fundas", slug: "/home-iphone" },
-  { emoji: "🎧", name: "Audífonos", slug: "/productos-top" },
-  { emoji: "🛡️", name: "Vidrios Templados", slug: "/home-iphone" },
+  { emoji: "", name: "Power Banks", slug: "/productos-top" },
+  { emoji: "", name: "Fundas", slug: "/home-iphone" },
+  { emoji: "", name: "Audífonos", slug: "/productos-top" },
+  { emoji: "", name: "Vidrios Templados", slug: "/home-iphone" },
 ];
 
 const MI_TELEFONO = "573003256891";
@@ -84,21 +84,21 @@ export default function Home() {
         {/* 🛡️ BARRA DE BENEFICIOS (TRUST BADGES) */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-16 p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-sm">
           <div className="flex items-center gap-4 justify-center md:justify-start">
-            <div className="p-3 bg-blue-500/10 rounded-xl text-blue-400 text-2xl">🚚</div>
+            <div className="p-3 bg-blue-500/10 rounded-xl text-blue-400 text-2xl">.</div>
             <div>
               <h4 className="text-sm font-semibold text-white">Envíos Garantizados</h4>
               <p className="text-xs text-gray-400">Despachos rápidos a todo el país</p>
             </div>
           </div>
           <div className="flex items-center gap-4 justify-center md:justify-start border-y md:border-y-0 md:border-x border-white/5 py-4 md:py-0 md:px-6">
-            <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-400 text-2xl">🛡️</div>
+            <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-400 text-2xl">.</div>
             <div>
               <h4 className="text-sm font-semibold text-white">Garantía Directa</h4>
               <p className="text-xs text-gray-400">Calidad probada en cada producto</p>
             </div>
           </div>
           <div className="flex items-center gap-4 justify-center md:justify-start">
-            <div className="p-3 bg-indigo-500/10 rounded-xl text-indigo-400 text-2xl">⚡</div>
+            <div className="p-3 bg-indigo-500/10 rounded-xl text-indigo-400 text-2xl">.</div>
             <div>
               <h4 className="text-sm font-semibold text-white">Atención Inmediata</h4>
               <p className="text-xs text-gray-400">Asesoría directa por WhatsApp</p>

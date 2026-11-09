@@ -15,7 +15,7 @@ const ORDENES: ReadonlyArray<ProductSort> = ['nombre', 'precio-asc', 'precio-des
  * (`coleccion`, `categoria`, `listado`, `busqueda`, `agotados`, `orden`) para
  * que la vitrina y la API devuelvan exactamente el mismo conjunto.
  *
- * Un filtro con valor no reconocido se descarta en lugar de causing un error:
+ * Un filtro con valor no reconocido se descarta en lugar de causar un error:
  * una URL manipulada a mano o un cliente desactualizado no deberían poder tumbar
  * la vitrina. El coste es que devuelve la lista completa, que es el mismo
  * resultado que pedir la página sin filtros.

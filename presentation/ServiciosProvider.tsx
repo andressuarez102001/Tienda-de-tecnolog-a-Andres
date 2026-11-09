@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'react';
 import {
   authenticationService,
   catalogoService,
@@ -67,20 +67,23 @@ export interface AppServices {
 const ServiciosContext = createContext<AppServices | null>(null);
 
 export function ServiciosProvider({ children }: { children: ReactNode }) {
-  const servicios: AppServices = {
-    catalogo: catalogoService,
-    productos: productoAdminService,
-    pedidos: pedidoAdminService,
-    usuarios: usuarioAdminService,
-    categorias: categoriaAdminService,
-    reportes: reporteService,
-    configuracion: configuracionTiendaService,
-    dashboard: dashboardService,
-    autenticacion: authenticationService,
-    priceFormatter: presentacion.priceFormatter,
-    whatsapp: presentacion.whatsappLinkBuilder,
-    sesion,
-  };
+  const servicios = useMemo<AppServices>(
+    () => ({
+      catalogo: catalogoService,
+      productos: productoAdminService,
+      pedidos: pedidoAdminService,
+      usuarios: usuarioAdminService,
+      categorias: categoriaAdminService,
+      reportes: reporteService,
+      configuracion: configuracionTiendaService,
+      dashboard: dashboardService,
+      autenticacion: authenticationService,
+      priceFormatter: presentacion.priceFormatter,
+      whatsapp: presentacion.whatsappLinkBuilder,
+      sesion,
+    }),
+    [],
+  );
 
   // Al montar, consulta una vez al servidor quién es el usuario de la cookie.
   // Así el Navbar ya muestra "Modo Admin" (o el enlace de acceso) tras
@@ -89,7 +92,7 @@ export function ServiciosProvider({ children }: { children: ReactNode }) {
   // primero; un 401 solo significa "aún no ha iniciado sesión".
   useEffect(() => {
     void sesion.hidratar().catch(() => undefined);
-  }, [sesion]);
+  }, []);
 
   return <ServiciosContext.Provider value={servicios}>{children}</ServiciosContext.Provider>;
 }
