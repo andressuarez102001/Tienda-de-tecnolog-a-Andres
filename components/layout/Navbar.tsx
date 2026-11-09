@@ -62,7 +62,7 @@ export default function Navbar() {
             href="/simulador"
             className="text-[11px] font-semibold text-blue-300 bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 hover:text-blue-200 px-3 py-1 rounded-full transition-all"
           >
-            Simulador B2B
+            Calculadora de compras en China
           </Link>
 
           {esAdmin ? (

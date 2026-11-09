@@ -34,11 +34,11 @@ export interface ResultadoImportacion {
 }
 
 /**
- * Calcula el costo de una importación bajo la modalidad elegida.
+ * Calcula el costo de una compra según la forma de envío elegida.
  *
- * El arancel del 10 % y el IVA del 19 % se liquidan sobre la base CIF
- * (mercancía + flete), y el IVA incluye el arancel, que es como se comporta
- * una importación comercial en Colombia.
+ * El impuesto de importación (10 %) y el IVA (19 %) se calculan sobre el
+ * valor de los productos más el envío. El IVA también incluye el impuesto
+ * de importación, tal como ocurre en una compra comercial en Colombia.
  */
 export function calcularImportacion(
   unidades: number,
@@ -120,9 +120,11 @@ export default function CalculadoraImportacion() {
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-widest text-blue-400">
-                  Volumen de compra
+                  Cantidad de productos
                 </span>
-                <h2 className="mt-1 text-xl font-bold text-white">Unidades a importar</h2>
+                <h2 className="mt-1 text-xl font-bold text-white">
+                  ¿Cuántas unidades quieres traer?
+                </h2>
               </div>
               <div className="rounded-2xl border border-blue-500/20 bg-blue-500/10 px-4 py-2 text-right">
                 <span className="block text-2xl font-extrabold leading-none text-white">
@@ -136,7 +138,7 @@ export default function CalculadoraImportacion() {
 
             <div className="mt-6">
               <label htmlFor={idUnidades} className="sr-only">
-                Cantidad de unidades a importar
+                Cantidad de productos que quieres traer
               </label>
               <input
                 id={idUnidades}
@@ -150,14 +152,14 @@ export default function CalculadoraImportacion() {
                 aria-valuetext={`${unidades} unidades`}
               />
               <div className="mt-2 flex justify-between text-[11px] font-medium text-gray-500">
-                <span>{UNIDADES_MINIMAS} uds.</span>
-                <span>{UNIDADES_MAXIMAS} uds.</span>
+                <span>{UNIDADES_MINIMAS} unidades</span>
+                <span>{UNIDADES_MAXIMAS} unidades</span>
               </div>
             </div>
 
             <div className="mt-6">
               <span className="block text-[11px] font-bold uppercase tracking-widest text-gray-500">
-                Modalidad de flete
+                Forma de envío
               </span>
               <div className="mt-3 grid grid-cols-2 gap-2 rounded-2xl border border-white/10 bg-black/40 p-1">
                 <button
@@ -170,7 +172,7 @@ export default function CalculadoraImportacion() {
                       : 'text-gray-400 hover:text-white'
                   }`}
                 >
-                  Marítimo
+                  Barco
                 </button>
                 <button
                   type="button"
@@ -182,44 +184,45 @@ export default function CalculadoraImportacion() {
                       : 'text-gray-400 hover:text-white'
                   }`}
                 >
-                  Aéreo
+                  Avión
                 </button>
               </div>
               <p className="mt-3 text-[11px] leading-relaxed text-gray-500">
-                Marítimo: {formatearCOP(resultado.fleteMaritimo)} · Aéreo:{' '}
-                {formatearCOP(resultado.fleteAereo)} para este volumen.
+                Por barco: {formatearCOP(resultado.fleteMaritimo)} · Por avión:{' '}
+                {formatearCOP(resultado.fleteAereo)} para esta cantidad. El barco tarda más,
+                pero cuesta menos; el avión llega más rápido, pero cuesta más.
               </p>
             </div>
           </div>
 
           <div>
             <h2 className="text-sm font-bold uppercase tracking-widest text-gray-400">
-              Desglose de la importación
+              Detalle de lo que pagarías
             </h2>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               <TarjetaResultado
-                etiqueta="Costo FOB"
+                etiqueta="Valor de los productos"
                 valor={formatearCOP(resultado.costoFob)}
-                descripcion="Mercancía puesta en el puerto de origen, sin flete internacional."
+                descripcion="Lo que cuestan los productos antes de pagar el envío internacional."
               />
               <TarjetaResultado
-                etiqueta={`Flete ${esMaritimo ? 'marítimo' : 'aéreo'}`}
+                etiqueta="Envío internacional"
                 valor={formatearCOP(resultado.flete)}
                 descripcion={
                   esMaritimo
-                    ? 'Transporte por vía marítima estimado para el volumen seleccionado.'
-                    : 'Transporte por vía aérea estimado para el volumen seleccionado.'
+                    ? 'Lo que cuesta transportar tu compra por barco desde China hasta Colombia.'
+                    : 'Lo que cuesta transportar tu compra por avión desde China hasta Colombia.'
                 }
               />
               <TarjetaResultado
-                etiqueta="Arancel aduanero (10%)"
+                etiqueta="Impuesto de importación (10%)"
                 valor={formatearCOP(resultado.arancel)}
-                descripcion="Liquidado sobre la base CIF: mercancía más flete."
+                descripcion="Un impuesto que cobra la aduana por ingresar los productos al país."
               />
               <TarjetaResultado
                 etiqueta="IVA (19%)"
                 valor={formatearCOP(resultado.iva)}
-                descripcion="Liquidado sobre la base CIF más el arancel de importación."
+                descripcion="Otro impuesto que se calcula sobre el valor de los productos y el impuesto de importación."
               />
             </div>
           </div>
@@ -228,30 +231,30 @@ export default function CalculadoraImportacion() {
         <aside className="lg:sticky lg:top-28">
           <div className="rounded-3xl border border-blue-500/20 bg-gradient-to-br from-blue-600/20 via-blue-500/10 to-transparent p-6 shadow-2xl backdrop-blur-xl sm:p-8">
             <span className="inline-flex items-center gap-2 rounded-full border border-blue-400/20 bg-blue-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-blue-300">
-              Estimación referencial
+              Valor aproximado
             </span>
             <h2 className="mt-5 text-sm font-bold uppercase tracking-widest text-blue-100/70">
-              Costo total de importación
+              Cuánto pagarías en total
             </h2>
             <p className="mt-2 text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
               {formatearCOP(resultado.total)}
             </p>
             <p className="mt-3 text-xs leading-relaxed text-gray-400">
-              Para {resultado.unidades} unidades con flete{' '}
-              {esMaritimo ? 'marítimo' : 'aéreo'} desde China a Colombia.
+              Para {resultado.unidades} unidades enviadas por{' '}
+              {esMaritimo ? 'barco' : 'avión'} desde China a Colombia.
             </p>
 
             <dl className="mt-7 space-y-3 border-t border-white/10 pt-5 text-xs">
               <div className="flex items-center justify-between gap-4">
-                <dt className="text-gray-400">Costo FOB</dt>
+                <dt className="text-gray-400">Productos</dt>
                 <dd className="font-semibold text-white">{formatearCOP(resultado.costoFob)}</dd>
               </div>
               <div className="flex items-center justify-between gap-4">
-                <dt className="text-gray-400">Flete</dt>
+                <dt className="text-gray-400">Envío</dt>
                 <dd className="font-semibold text-white">{formatearCOP(resultado.flete)}</dd>
               </div>
               <div className="flex items-center justify-between gap-4">
-                <dt className="text-gray-400">Arancel</dt>
+                <dt className="text-gray-400">Impuesto de importación</dt>
                 <dd className="font-semibold text-white">{formatearCOP(resultado.arancel)}</dd>
               </div>
               <div className="flex items-center justify-between gap-4">
@@ -261,9 +264,9 @@ export default function CalculadoraImportacion() {
             </dl>
 
             <div className="mt-5 rounded-2xl border border-white/10 bg-black/30 p-4 text-[11px] leading-relaxed text-gray-500">
-              Costo FOB unitario de referencia: {formatearCOP(COSTO_FOB_UNITARIO)}. Los
-              valores son una simulación y no incluyen seguro, agenciamiento aduanero ni
-              transporte nacional.
+              Tomamos un valor de referencia de {formatearCOP(COSTO_FOB_UNITARIO)} por
+              producto. Este resultado es solo un cálculo aproximado: no incluye seguro,
+              trámites de aduana, transporte dentro de Colombia ni otros cobros.
             </div>
           </div>
         </aside>
